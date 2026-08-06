@@ -1,0 +1,94 @@
+# setuptools >=75.4 required: older versions mark the editable install's
+# `__editable__.*.pth` as hidden on macOS, which Python 3.13's site.py then
+# skips — silently breaking `import` after `pip install -e`.
+[build-system]
+requires = ["setuptools>=75.4", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retail-clickstream-ai"
+version = "0.1.0"
+description = "Industry-simulated AI product workflow predicting the next product category in an online-shopping session, via a CrewAI Flow over two crews."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Adi Kogan" }]
+keywords = ["crewai", "clickstream", "machine-learning", "streamlit", "retail"]
+
+# Runtime dependencies. Exact resolved versions are pinned in requirements.txt
+# (produced with `pip freeze`) for reproducibility.
+dependencies = [
+    "crewai",          # multi-agent framework; brings pydantic + litellm/OpenAI integration
+    "pandas",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "streamlit",
+    "joblib",
+    "pydantic",        # declared explicitly even though CrewAI depends on it
+    "python-dotenv",   # local .env loading (never required to import the package)
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",            # lint AND format (replaces black + flake8; no duplicate tools)
+    "mypy",
+]
+
+[project.urls]
+Repository = "https://github.com/CyberSecurity-Repository/Final-Project"
+
+# Flat layout: the importable package lives at the repository root as
+# `retail_clickstream_ai/` (not under `src/`). This keeps `import
+# retail_clickstream_ai` working from the repo root regardless of the editable
+# install's `.pth` — which setuptools marks hidden on macOS and Python 3.13
+# then skips (see the build-system note above and docs decision record).
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["retail_clickstream_ai*"]
+
+# ---------------------------------------------------------------------------
+# Tooling configuration
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["retail_clickstream_ai", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["retail_clickstream_ai"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+# Add the repo root to sys.path so tests import the package deterministically,
+# independent of the editable-install .pth.
+pythonpath = ["."]
+addopts = "-ra"
+markers = [
+    "integration: end-to-end / Flow integration tests (mocked LLM boundaries)",
+]
+
+[tool.mypy]
+python_version = "3.13"
+files = ["retail_clickstream_ai"]
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source = ["retail_clickstream_ai"]
+
+[tool.coverage.report]
+show_missing = true
