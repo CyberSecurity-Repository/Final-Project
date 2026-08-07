@@ -25,7 +25,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 | 1 | Clean data | `artifacts/analyst/clean_data.csv` | 3 | ⬜ |
 | 2 | EDA report | `artifacts/analyst/eda_report.html` | 3 | ⬜ |
 | 3 | Insights | `artifacts/analyst/insights.md` | 3 | ⬜ |
-| 4 | Dataset contract | `artifacts/analyst/dataset_contract.json` | 2–3 | ⬜ |
+| 4 | Dataset contract | `artifacts/analyst/dataset_contract.json` | 2–3 | 🟡 |
 | 5 | Features | `artifacts/scientist/features.csv` | 4 | ⬜ |
 | 6 | Model | `artifacts/scientist/model.joblib` | 4 | ⬜ |
 | 7 | Evaluation report | `artifacts/scientist/evaluation_report.md` | 4 | ⬜ |
@@ -47,7 +47,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
 | 1 | Automated Analyst → Scientist handoff | Flow passes typed state only after Analyst gate | 5 | ⬜ |
-| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | ⬜ |
+| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | 🟡 |
 | 3 | Required features exist before modeling | Deterministic model gate | 4–5 | ⬜ |
 | 4 | Reproducibility | Seeds, chronological split, lock, run manifest, hashes, logs | 1–5 | 🟡 |
 | 5 | Graceful failure | Failed gate → `failure_report.json` + remediation; downstream blocked | 5 | ⬜ |
@@ -56,7 +56,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | No random row split | Month-based split; decision record | 2/4 | ⬜ |
+| 1 | No random row split | Month-based split; decision record | 2/4 | 🟡 |
 | 2 | Session-aware next-click target | Target shift within verified session; last click dropped | 4 | ⬜ |
 | 3 | Past-only features | Leakage audit + unit tests | 4 | ⬜ |
 | 4 | Winner chosen on validation; test used once | Selection on macro F1; single test evaluation | 4 | ⬜ |
