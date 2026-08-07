@@ -136,7 +136,9 @@ _SCHEMA: tuple[ColumnSpec, ...] = (
         "country",
         "int64",
         False,
-        "Coded country of origin (documented, IP-based). Observed domain 1–47.",
+        "Coded origin of the IP address (47 categories; 1–42 are countries, "
+        "12='unidentified', 43–47 are TLD groups .biz/.com/.int/.net/.org). "
+        "Observed domain 1–47. Labels: see the codebook.",
         value_range=(1, 47),
     ),
     ColumnSpec(
@@ -163,8 +165,10 @@ _SCHEMA: tuple[ColumnSpec, ...] = (
         "page 2 (clothing model)",
         "string",
         False,
-        "Product code (documented: 217 products), e.g. 'A13'. Observed pattern "
-        "letter+digits; first letter (A/B/C/P) aligns with the main category.",
+        "Product code (documented: 217 products, no names in the source), e.g. "
+        "'A13'. Observed pattern letter+digits; the first letter (A/B/C/P) tracks "
+        "the main category for all but 1 of 165,474 rows (one skirts row carries "
+        "an A-code: 2008-04-10, session 2766, click 27).",
         pattern=_PAGE2_PATTERN,
     ),
     ColumnSpec(
@@ -242,8 +246,13 @@ _ASSUMPTIONS: tuple[str, ...] = (
     "that: the composite session_key is authoritative.",
     "Coded columns (country, colour, location, etc.) are categorical ids, not "
     "quantities; only price/order/day are treated as ordered numbers.",
-    "Publisher label meanings (category/colour/pose text) are documented, not "
-    "independently verifiable from the numeric file, and are recorded as such.",
+    "Code meanings (category/colour/location/pose/price-2/country labels) come "
+    "from the dataset description at docs/reference/"
+    "e-shop_clothing_2008_data_description.txt and are transcribed into a "
+    "display-only codebook; they are NOT validation constraints.",
+    "One row (2008-04-10, session 2766, click 27) is labeled category 2 (skirts) "
+    "but carries product code A18 (the A/trousers family): a single cross-column "
+    "inconsistency, left as-is and not enforced.",
 )
 
 _CONSTRAINTS: tuple[str, ...] = (
@@ -285,6 +294,7 @@ class DatasetContract:
                 "(UCI Machine Learning Repository, dataset 553)",
                 "license": "CC BY 4.0",
                 "documented_time_period": "April–August 2008 (five months)",
+                "data_description_file": "docs/reference/e-shop_clothing_2008_data_description.txt",
                 "raw_file": {
                     "name": d.RAW_FILENAME,
                     "sha256": RAW_SHA256,
@@ -334,6 +344,11 @@ class DatasetContract:
                 "docs/decisions/0001-no-random-row-split.md.",
             },
             "required_output_columns": list(d.REQUIRED_OUTPUT_COLUMNS),
+            "label_codebook": {
+                "path": "artifacts/analyst/codebook.json",
+                "note": "Human-readable value labels for DISPLAY ONLY; not a "
+                "validation constraint. Generated from the data description.",
+            },
             "assumptions": list(_ASSUMPTIONS),
             "constraints": list(_CONSTRAINTS),
         }
