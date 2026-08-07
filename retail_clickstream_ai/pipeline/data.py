@@ -265,6 +265,14 @@ def _cmd_build_contract(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_build_codebook(args: argparse.Namespace) -> int:
+    from retail_clickstream_ai.reference import codebook
+
+    output = codebook.write(args.output)
+    print(f"wrote display-only codebook -> {output}")
+    return 0
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     """Construct the ``python -m retail_clickstream_ai.pipeline.data`` parser."""
     parser = argparse.ArgumentParser(
@@ -288,6 +296,16 @@ def build_arg_parser() -> argparse.ArgumentParser:
         help="Where to write the contract (default: artifacts/analyst/dataset_contract.json).",
     )
     p_build.set_defaults(func=_cmd_build_contract)
+
+    p_codebook = sub.add_parser(
+        "build-codebook", help="Write the display-only value codebook (JSON)."
+    )
+    p_codebook.add_argument(
+        "--output",
+        default="artifacts/analyst/codebook.json",
+        help="Where to write the codebook (default: artifacts/analyst/codebook.json).",
+    )
+    p_codebook.set_defaults(func=_cmd_build_codebook)
     return parser
 
 

@@ -3,7 +3,8 @@
     "Data covers April–August 2008 for one online clothing shop; it is a workflow demonstration and NOT evidence of present-day shopping behavior.",
     "In this file session_id is globally unique, but the contract does not assume that: the composite session_key is authoritative.",
     "Coded columns (country, colour, location, etc.) are categorical ids, not quantities; only price/order/day are treated as ordered numbers.",
-    "Publisher label meanings (category/colour/pose text) are documented, not independently verifiable from the numeric file, and are recorded as such."
+    "Code meanings (category/colour/location/pose/price-2/country labels) come from the dataset description at docs/reference/e-shop_clothing_2008_data_description.txt and are transcribed into a display-only codebook; they are NOT validation constraints.",
+    "One row (2008-04-10, session 2766, click 27) is labeled category 2 (skirts) but carries product code A18 (the A/trousers family): a single cross-column inconsistency, left as-is and not enforced."
   ],
   "cleaning_rules": [
     "Parse with delimiter ';' and UTF-8/ASCII encoding; the file uses CRLF line endings.",
@@ -22,6 +23,7 @@
   ],
   "contract_version": "1.0.0",
   "dataset": {
+    "data_description_file": "docs/reference/e-shop_clothing_2008_data_description.txt",
     "documented_time_period": "April–August 2008 (five months)",
     "kaggle_slug": "tunguz/clickstream-data-for-online-shopping",
     "license": "CC BY 4.0",
@@ -42,6 +44,10 @@
       "kaggle": "https://www.kaggle.com/datasets/tunguz/clickstream-data-for-online-shopping",
       "uci": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping"
     }
+  },
+  "label_codebook": {
+    "note": "Human-readable value labels for DISPLAY ONLY; not a validation constraint. Generated from the data description.",
+    "path": "artifacts/analyst/codebook.json"
   },
   "required_output_columns": [
     "year",
@@ -109,7 +115,7 @@
       "source_name": "order"
     },
     {
-      "description": "Coded country of origin (documented, IP-based). Observed domain 1–47.",
+      "description": "Coded origin of the IP address (47 categories; 1–42 are countries, 12='unidentified', 43–47 are TLD groups .biz/.com/.int/.net/.org). Observed domain 1–47. Labels: see the codebook.",
       "dtype": "int64",
       "name": "country",
       "nullable": false,
@@ -144,7 +150,7 @@
       "source_name": "page 1 (main category)"
     },
     {
-      "description": "Product code (documented: 217 products), e.g. 'A13'. Observed pattern letter+digits; first letter (A/B/C/P) aligns with the main category.",
+      "description": "Product code (documented: 217 products, no names in the source), e.g. 'A13'. Observed pattern letter+digits; the first letter (A/B/C/P) tracks the main category for all but 1 of 165,474 rows (one skirts row carries an A-code: 2008-04-10, session 2766, click 27).",
       "dtype": "string",
       "name": "page_2_clothing_model",
       "nullable": false,
