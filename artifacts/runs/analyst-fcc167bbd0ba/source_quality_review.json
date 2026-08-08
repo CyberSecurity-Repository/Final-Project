@@ -1,0 +1,39 @@
+{
+  "checks": [
+    {
+      "evidence_ref": "artifacts/runs#raw_validation_report.json",
+      "name": "input_sha256_match",
+      "passed": true
+    },
+    {
+      "evidence_ref": "artifacts/runs#raw_validation_report.json",
+      "name": "schema_and_ranges",
+      "passed": true
+    },
+    {
+      "evidence_ref": "artifacts/runs#raw_validation_report.json",
+      "name": "session_click_order",
+      "passed": true
+    }
+  ],
+  "evidence_refs": [
+    "artifacts/runs/analyst-fcc167bbd0ba/raw_validation_report.json"
+  ],
+  "handoff_ready": true,
+  "issues": [],
+  "review_path": "artifacts/runs/analyst-fcc167bbd0ba/source_quality_review.json",
+  "review_sha256": "2333bf15f6227d01492cb09177f30665a2e14fb14b94b0eed7e8983ff16a10bf",
+  "run_id": "analyst-fcc167bbd0ba",
+  "source": {
+    "dataset_name": "Clickstream Data for Online Shopping",
+    "documented_time_period": "April–August 2008 (five months)",
+    "input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+    "license": "CC BY 4.0",
+    "observed_time_period": "2008 months 4,5,6,7,8",
+    "primary_documentation_url": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping",
+    "publisher": "Mariusz Łapczyński and Sylwester Białowąs (UCI Machine Learning Repository, dataset 553)",
+    "source_url": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping"
+  },
+  "status": "PASS",
+  "summary": "Source authentic and structurally usable; raw validation passed."
+}

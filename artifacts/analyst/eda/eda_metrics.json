@@ -1,0 +1,554 @@
+{
+  "clicks_per_session": {
+    "buckets": {
+      "1": 5042,
+      "11-20": 3103,
+      "2": 3320,
+      "21+": 1461,
+      "3": 2620,
+      "4": 2037,
+      "5": 1597,
+      "6-10": 4846
+    },
+    "max": 195,
+    "mean": 6.8873,
+    "median": 4.0,
+    "min": 1,
+    "p90": 16.0,
+    "p99": 42.0,
+    "std": 8.995
+  },
+  "colour": {
+    "by_code": {
+      "1": {
+        "code": 1,
+        "count": 7785,
+        "label": "beige",
+        "share_pct": 4.7047
+      },
+      "10": {
+        "code": 10,
+        "count": 3579,
+        "label": "olive",
+        "share_pct": 2.1629
+      },
+      "11": {
+        "code": 11,
+        "count": 5292,
+        "label": "pink",
+        "share_pct": 3.1981
+      },
+      "12": {
+        "code": 12,
+        "count": 8830,
+        "label": "red",
+        "share_pct": 5.3362
+      },
+      "13": {
+        "code": 13,
+        "count": 6295,
+        "label": "violet",
+        "share_pct": 3.8042
+      },
+      "14": {
+        "code": 14,
+        "count": 15939,
+        "label": "white",
+        "share_pct": 9.6323
+      },
+      "2": {
+        "code": 2,
+        "count": 29764,
+        "label": "black",
+        "share_pct": 17.9871
+      },
+      "3": {
+        "code": 3,
+        "count": 29259,
+        "label": "blue",
+        "share_pct": 17.6819
+      },
+      "4": {
+        "code": 4,
+        "count": 16517,
+        "label": "brown",
+        "share_pct": 9.9816
+      },
+      "5": {
+        "code": 5,
+        "count": 1667,
+        "label": "burgundy",
+        "share_pct": 1.0074
+      },
+      "6": {
+        "code": 6,
+        "count": 17476,
+        "label": "gray",
+        "share_pct": 10.5612
+      },
+      "7": {
+        "code": 7,
+        "count": 6876,
+        "label": "green",
+        "share_pct": 4.1553
+      },
+      "8": {
+        "code": 8,
+        "count": 2664,
+        "label": "navy blue",
+        "share_pct": 1.6099
+      },
+      "9": {
+        "code": 9,
+        "count": 13531,
+        "label": "of many colors",
+        "share_pct": 8.1771
+      }
+    }
+  },
+  "country": {
+    "distinct": 47,
+    "top": [
+      {
+        "code": 29,
+        "count": 133963,
+        "label": "Poland",
+        "share_pct": 80.9571
+      },
+      {
+        "code": 9,
+        "count": 18003,
+        "label": "Czech Republic",
+        "share_pct": 10.8797
+      },
+      {
+        "code": 24,
+        "count": 4091,
+        "label": "Lithuania",
+        "share_pct": 2.4723
+      },
+      {
+        "code": 46,
+        "count": 2522,
+        "label": "net (*.net)",
+        "share_pct": 1.5241
+      },
+      {
+        "code": 44,
+        "count": 1385,
+        "label": "com (*.com)",
+        "share_pct": 0.837
+      },
+      {
+        "code": 16,
+        "count": 834,
+        "label": "Germany",
+        "share_pct": 0.504
+      },
+      {
+        "code": 21,
+        "count": 811,
+        "label": "Ireland",
+        "share_pct": 0.4901
+      },
+      {
+        "code": 34,
+        "count": 716,
+        "label": "Slovakia",
+        "share_pct": 0.4327
+      },
+      {
+        "code": 41,
+        "count": 684,
+        "label": "United Kingdom",
+        "share_pct": 0.4134
+      },
+      {
+        "code": 3,
+        "count": 256,
+        "label": "Belgium",
+        "share_pct": 0.1547
+      },
+      {
+        "code": 27,
+        "count": 227,
+        "label": "Netherlands",
+        "share_pct": 0.1372
+      },
+      {
+        "code": 12,
+        "count": 210,
+        "label": "unidentified",
+        "share_pct": 0.1269
+      },
+      {
+        "code": 42,
+        "count": 170,
+        "label": "USA",
+        "share_pct": 0.1027
+      },
+      {
+        "code": 37,
+        "count": 163,
+        "label": "Sweden",
+        "share_pct": 0.0985
+      },
+      {
+        "code": 10,
+        "count": 152,
+        "label": "Denmark",
+        "share_pct": 0.0919
+      }
+    ]
+  },
+  "counts": {
+    "clicks": 165474,
+    "columns": 15,
+    "rows": 165474,
+    "sessions": 24026,
+    "target_rows": 141448
+  },
+  "data_quality": {
+    "cross_column_first_letter": {
+      "by_category": {
+        "1": {
+          "deviating_rows": 0,
+          "label": "trousers",
+          "modal_letter": "A"
+        },
+        "2": {
+          "deviating_rows": 1,
+          "label": "skirts",
+          "modal_letter": "B"
+        },
+        "3": {
+          "deviating_rows": 0,
+          "label": "blouses",
+          "modal_letter": "C"
+        },
+        "4": {
+          "deviating_rows": 0,
+          "label": "sale",
+          "modal_letter": "P"
+        }
+      },
+      "mismatch_total": 1
+    },
+    "full_row_duplicates": 0,
+    "null_total": 0,
+    "nulls": {
+      "colour": 0,
+      "country": 0,
+      "day": 0,
+      "location": 0,
+      "model_photography": 0,
+      "month": 0,
+      "order": 0,
+      "page": 0,
+      "page_1_main_category": 0,
+      "page_2_clothing_model": 0,
+      "price": 0,
+      "price_2": 0,
+      "session_id": 0,
+      "session_key": 0,
+      "year": 0
+    },
+    "rows_dropped_in_cleaning": 0,
+    "session_order_verified": true
+  },
+  "date_coverage": {
+    "busiest_month": 4,
+    "busiest_month_clicks": 48199,
+    "busiest_month_share_pct": 29.1278,
+    "by_month": {
+      "4": {
+        "clicks": 48199,
+        "clicks_share_pct": 29.1278,
+        "month": 4,
+        "sessions": 6941
+      },
+      "5": {
+        "clicks": 35654,
+        "clicks_share_pct": 21.5466,
+        "month": 5,
+        "sessions": 5206
+      },
+      "6": {
+        "clicks": 32242,
+        "clicks_share_pct": 19.4846,
+        "month": 6,
+        "sessions": 4884
+      },
+      "7": {
+        "clicks": 35231,
+        "clicks_share_pct": 21.291,
+        "month": 7,
+        "sessions": 5071
+      },
+      "8": {
+        "clicks": 14148,
+        "clicks_share_pct": 8.55,
+        "month": 8,
+        "sessions": 1924
+      }
+    },
+    "months": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "headline": {
+    "busiest_month": 4,
+    "busiest_month_clicks": 48199,
+    "busiest_month_share_pct": 29.1278,
+    "clicks": 165474,
+    "clicks_per_session_max": 195,
+    "clicks_per_session_mean": 6.8873,
+    "clicks_per_session_median": 4.0,
+    "days_count": 31,
+    "distinct_colours": 14,
+    "distinct_countries": 47,
+    "distinct_products": 217,
+    "duplicate_rows": 0,
+    "first_letter_mismatch_count": 1,
+    "months_count": 5,
+    "months_list": [
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "next_same_category_pct": 81.2475,
+    "null_total": 0,
+    "price_above_category_avg_pct": 51.1833,
+    "price_max": 82,
+    "price_median": 43.0,
+    "price_min": 18,
+    "rows": 165474,
+    "sale_category_share_pct": 23.4158,
+    "sessions": 24026,
+    "single_click_session_pct": 20.9856,
+    "strongest_transition_from_label": "skirts",
+    "strongest_transition_prob_pct": 9.2637,
+    "strongest_transition_to_label": "blouses",
+    "target_rows": 141448,
+    "top_category_code": 1,
+    "top_category_label": "trousers",
+    "top_category_share_pct": 30.0603,
+    "top_country_code": 29,
+    "top_country_label": "Poland",
+    "top_country_share_pct": 80.9571
+  },
+  "location": {
+    "by_code": {
+      "1": {
+        "code": 1,
+        "count": 34532,
+        "label": "top left",
+        "share_pct": 20.8685
+      },
+      "2": {
+        "code": 2,
+        "count": 33383,
+        "label": "top in the middle",
+        "share_pct": 20.1742
+      },
+      "3": {
+        "code": 3,
+        "count": 21656,
+        "label": "top right",
+        "share_pct": 13.0873
+      },
+      "4": {
+        "code": 4,
+        "count": 27377,
+        "label": "bottom left",
+        "share_pct": 16.5446
+      },
+      "5": {
+        "code": 5,
+        "count": 27783,
+        "label": "bottom in the middle",
+        "share_pct": 16.7899
+      },
+      "6": {
+        "code": 6,
+        "count": 20743,
+        "label": "bottom right",
+        "share_pct": 12.5355
+      }
+    }
+  },
+  "main_category": {
+    "by_category": {
+      "1": {
+        "code": 1,
+        "count": 49742,
+        "label": "trousers",
+        "share_pct": 30.0603
+      },
+      "2": {
+        "code": 2,
+        "count": 38408,
+        "label": "skirts",
+        "share_pct": 23.2109
+      },
+      "3": {
+        "code": 3,
+        "count": 38577,
+        "label": "blouses",
+        "share_pct": 23.313
+      },
+      "4": {
+        "code": 4,
+        "count": 38747,
+        "label": "sale",
+        "share_pct": 23.4158
+      }
+    },
+    "total": 165474
+  },
+  "model_photography": {
+    "by_code": {
+      "1": {
+        "code": 1,
+        "count": 122439,
+        "label": "en face",
+        "share_pct": 73.9929
+      },
+      "2": {
+        "code": 2,
+        "count": 43035,
+        "label": "profile",
+        "share_pct": 26.0071
+      }
+    }
+  },
+  "page": {
+    "by_code": {
+      "1": {
+        "code": 1,
+        "count": 93452,
+        "label": "1",
+        "share_pct": 56.4753
+      },
+      "2": {
+        "code": 2,
+        "count": 41037,
+        "label": "2",
+        "share_pct": 24.7997
+      },
+      "3": {
+        "code": 3,
+        "count": 19301,
+        "label": "3",
+        "share_pct": 11.6641
+      },
+      "4": {
+        "code": 4,
+        "count": 8861,
+        "label": "4",
+        "share_pct": 5.3549
+      },
+      "5": {
+        "code": 5,
+        "count": 2823,
+        "label": "5",
+        "share_pct": 1.706
+      }
+    }
+  },
+  "price": {
+    "above_category_avg_pct": 51.1833,
+    "distinct": 20,
+    "max": 82,
+    "mean": 43.8025,
+    "median": 43.0,
+    "min": 18,
+    "std": 12.5481
+  },
+  "price_2": {
+    "by_code": {
+      "1": {
+        "code": 1,
+        "count": 84695,
+        "label": "yes",
+        "share_pct": 51.1833
+      },
+      "2": {
+        "code": 2,
+        "count": 80779,
+        "label": "no",
+        "share_pct": 48.8167
+      }
+    }
+  },
+  "product_code": {
+    "distinct": 217,
+    "first_letter_distribution": {
+      "A": 49743,
+      "B": 38407,
+      "C": 38577,
+      "P": 38747
+    }
+  },
+  "provenance": {
+    "clean_sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd",
+    "computed_from": "artifacts/analyst/clean_data.csv",
+    "contract_version": "1.0.0",
+    "input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+    "time_period": "April–August 2008 (one online clothing shop)"
+  },
+  "transitions": {
+    "counts": {
+      "1->1": 34598,
+      "1->2": 3153,
+      "1->3": 3206,
+      "1->4": 2114,
+      "2->1": 2027,
+      "2->2": 25645,
+      "2->3": 2997,
+      "2->4": 1683,
+      "3->1": 2252,
+      "3->2": 1723,
+      "3->3": 26326,
+      "3->4": 2734,
+      "4->1": 1618,
+      "4->2": 1415,
+      "4->3": 1603,
+      "4->4": 28354
+    },
+    "next_same_category_pct": 81.2475,
+    "row_normalized_pct": {
+      "1->1": 80.3278,
+      "1->2": 7.3205,
+      "1->3": 7.4435,
+      "1->4": 4.9082,
+      "2->1": 6.2655,
+      "2->2": 79.2687,
+      "2->3": 9.2637,
+      "2->4": 5.2022,
+      "3->1": 6.817,
+      "3->2": 5.2157,
+      "3->3": 79.6912,
+      "3->4": 8.2761,
+      "4->1": 4.9045,
+      "4->2": 4.2892,
+      "4->3": 4.859,
+      "4->4": 85.9473
+    },
+    "strongest_offdiagonal": {
+      "count": 2997,
+      "from_code": 2,
+      "from_label": "skirts",
+      "prob_pct": 9.2637,
+      "to_code": 3,
+      "to_label": "blouses"
+    },
+    "target_rows": 141448
+  }
+}

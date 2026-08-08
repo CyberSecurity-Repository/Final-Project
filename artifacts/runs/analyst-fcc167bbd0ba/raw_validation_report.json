@@ -1,0 +1,14 @@
+{
+  "column_count": 14,
+  "expected_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+  "input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+  "passed": true,
+  "report": {
+    "fatal_count": 0,
+    "issue_count": 0,
+    "issues": [],
+    "ok": true
+  },
+  "row_count": 165474,
+  "sha256_match": true
+}
