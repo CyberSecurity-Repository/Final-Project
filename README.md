@@ -58,9 +58,28 @@ ruff format --check .
 mypy                # type check (targets retail_clickstream_ai/ via config)
 ```
 
+## Data & contract (Stage 2)
+
+The raw CSV is **not committed** — see [`data/README.md`](data/README.md) for
+acquisition (Kaggle slug `tunguz/clickstream-data-for-online-shopping`),
+attribution, and the expected path `data/raw/e-shop clothing 2008.csv`.
+
+```bash
+# Validate a downloaded raw CSV against the dataset contract (offline).
+python -m retail_clickstream_ai.pipeline.data validate-raw \
+  --input "data/raw/e-shop clothing 2008.csv"
+
+# Regenerate the deterministic dataset_contract.json artifact.
+python -m retail_clickstream_ai.pipeline.data build-contract
+```
+
+The machine-readable contract lives at
+[`artifacts/analyst/dataset_contract.json`](artifacts/analyst/dataset_contract.json):
+normalized schema, per-column type/range/category constraints, the composite
+session key, the next-category target definition, and the month-based split.
+
 ## Later-stage commands (pending)
 
-- **Raw-data validation** — _pending Stage 2_.
 - **Analyst-only / Scientist-only runs** — _pending Stage 3–4_.
 - **Full CrewAI Flow** — _pending Stage 5_.
 - **Streamlit app** — `streamlit run app.py` (placeholder until _Stage 6_).

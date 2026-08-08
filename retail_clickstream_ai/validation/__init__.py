@@ -7,3 +7,22 @@ failed validator ends the task and blocks downstream work.
 """
 
 from __future__ import annotations
+
+from retail_clickstream_ai.validation.contract import ColumnSpec, DatasetContract
+from retail_clickstream_ai.validation.errors import (
+    ContractValidationError,
+    Severity,
+    ValidationIssue,
+    ValidationReport,
+)
+from retail_clickstream_ai.validation.raw import validate_dataframe
+
+__all__ = [
+    "ColumnSpec",
+    "ContractValidationError",
+    "DatasetContract",
+    "Severity",
+    "ValidationIssue",
+    "ValidationReport",
+    "validate_dataframe",
+]

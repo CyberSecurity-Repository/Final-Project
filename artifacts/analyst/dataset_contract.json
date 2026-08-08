@@ -1,0 +1,299 @@
+{
+  "assumptions": [
+    "Data covers April–August 2008 for one online clothing shop; it is a workflow demonstration and NOT evidence of present-day shopping behavior.",
+    "In this file session_id is globally unique, but the contract does not assume that: the composite session_key is authoritative.",
+    "Coded columns (country, colour, location, etc.) are categorical ids, not quantities; only price/order/day are treated as ordered numbers.",
+    "Code meanings (category/colour/location/pose/price-2/country labels) come from the dataset description at docs/reference/e-shop_clothing_2008_data_description.txt and are transcribed into a display-only codebook; they are NOT validation constraints.",
+    "One row (2008-04-10, session 2766, click 27) is labeled category 2 (skirts) but carries product code A18 (the A/trousers family): a single cross-column inconsistency, left as-is and not enforced."
+  ],
+  "cleaning_rules": [
+    "Parse with delimiter ';' and UTF-8/ASCII encoding; the file uses CRLF line endings.",
+    "Normalize column names with normalize_column_name (lowercase, non-alphanumeric runs -> single underscore, trimmed).",
+    "Keep 'page 2 (clothing model)' as text; parse all other columns as int64.",
+    "Require zero nulls in every column (the source has none).",
+    "Reject full-row duplicates (the source has none).",
+    "Derive session_key = 'YYYY-MM-DD-s<session_id>' as the canonical session id.",
+    "Sort deterministically by (year, month, day, session_id, order) ascending (stable). This sort defines click order regardless of on-disk row order.",
+    "Require each session's 'order' values to form a contiguous 1..n sequence (no gaps, no duplicates)."
+  ],
+  "constraints": [
+    "A random row split is forbidden: clicks in a session are correlated and would leak across splits. Use the chronological month split below.",
+    "Features must use only the current and earlier clicks of the same session; no value derived from click t+1 or later may enter the features (target excepted).",
+    "All four main categories must be present in every split (verified: they are)."
+  ],
+  "contract_version": "1.0.0",
+  "dataset": {
+    "data_description_file": "docs/reference/e-shop_clothing_2008_data_description.txt",
+    "documented_time_period": "April–August 2008 (five months)",
+    "kaggle_slug": "tunguz/clickstream-data-for-online-shopping",
+    "license": "CC BY 4.0",
+    "name": "Clickstream Data for Online Shopping",
+    "publisher": "Mariusz Łapczyński and Sylwester Białowąs (UCI Machine Learning Repository, dataset 553)",
+    "raw_file": {
+      "column_count": 14,
+      "committed": false,
+      "delimiter": ";",
+      "encoding": "utf-8",
+      "line_ending": "CRLF",
+      "name": "e-shop clothing 2008.csv",
+      "row_count": 165474,
+      "sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+      "size_bytes": 6675312
+    },
+    "source_urls": {
+      "kaggle": "https://www.kaggle.com/datasets/tunguz/clickstream-data-for-online-shopping",
+      "uci": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping"
+    }
+  },
+  "label_codebook": {
+    "note": "Human-readable value labels for DISPLAY ONLY; not a validation constraint. Generated from the data description.",
+    "path": "artifacts/analyst/codebook.json"
+  },
+  "required_output_columns": [
+    "year",
+    "month",
+    "day",
+    "order",
+    "country",
+    "session_id",
+    "page_1_main_category",
+    "page_2_clothing_model",
+    "colour",
+    "location",
+    "model_photography",
+    "price",
+    "price_2",
+    "page",
+    "session_key"
+  ],
+  "schema": [
+    {
+      "description": "Calendar year of the click. Observed: constant 2008.",
+      "dtype": "int64",
+      "name": "year",
+      "nullable": false,
+      "range": {
+        "max": 2008,
+        "min": 2008
+      },
+      "source_name": "year"
+    },
+    {
+      "allowed_values": [
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "description": "Month of the click. Documented + observed: 4=April … 8=August.",
+      "dtype": "int64",
+      "name": "month",
+      "nullable": false,
+      "source_name": "month"
+    },
+    {
+      "description": "Day of the month (observed 1–31).",
+      "dtype": "int64",
+      "name": "day",
+      "nullable": false,
+      "range": {
+        "max": 31,
+        "min": 1
+      },
+      "source_name": "day"
+    },
+    {
+      "description": "Click sequence within a session, starting at 1 (documented 'order'). Observed: a contiguous 1..n run per verified session.",
+      "dtype": "int64",
+      "name": "order",
+      "nullable": false,
+      "range": {
+        "max": null,
+        "min": 1
+      },
+      "source_name": "order"
+    },
+    {
+      "description": "Coded origin of the IP address (47 categories; 1–42 are countries, 12='unidentified', 43–47 are TLD groups .biz/.com/.int/.net/.org). Observed domain 1–47. Labels: see the codebook.",
+      "dtype": "int64",
+      "name": "country",
+      "nullable": false,
+      "range": {
+        "max": 47,
+        "min": 1
+      },
+      "source_name": "country"
+    },
+    {
+      "description": "Per-session id (documented 'short record'). Observed 1–24026 and, in this file, globally unique; the canonical session key still composes it with the date (see session_key) so it stays correct if ids reset per day.",
+      "dtype": "int64",
+      "name": "session_id",
+      "nullable": false,
+      "range": {
+        "max": null,
+        "min": 1
+      },
+      "source_name": "session ID"
+    },
+    {
+      "allowed_values": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "description": "Main product category. Documented codes: 1=trousers, 2=skirts, 3=blouses, 4=sale. This is the source column for the prediction target.",
+      "dtype": "int64",
+      "name": "page_1_main_category",
+      "nullable": false,
+      "source_name": "page 1 (main category)"
+    },
+    {
+      "description": "Product code (documented: 217 products, no names in the source), e.g. 'A13'. Observed pattern letter+digits; the first letter (A/B/C/P) tracks the main category for all but 1 of 165,474 rows (one skirts row carries an A-code: 2008-04-10, session 2766, click 27).",
+      "dtype": "string",
+      "name": "page_2_clothing_model",
+      "nullable": false,
+      "pattern": "^[A-P][0-9]+$",
+      "source_name": "page 2 (clothing model)"
+    },
+    {
+      "allowed_values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "description": "Coded product colour. Documented 14-colour palette; observed domain 1–14.",
+      "dtype": "int64",
+      "name": "colour",
+      "nullable": false,
+      "source_name": "colour"
+    },
+    {
+      "allowed_values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "description": "Photo location on the page (documented: screen split into six regions). Observed domain 1–6.",
+      "dtype": "int64",
+      "name": "location",
+      "nullable": false,
+      "source_name": "location"
+    },
+    {
+      "allowed_values": [
+        1,
+        2
+      ],
+      "description": "Model pose. Documented: 1=en face, 2=profile. Observed domain 1–2.",
+      "dtype": "int64",
+      "name": "model_photography",
+      "nullable": false,
+      "source_name": "model photography"
+    },
+    {
+      "description": "Price in US dollars (documented). Observed integers 18–82; validated as a positive integer rather than a fixed set so it stays feature-friendly.",
+      "dtype": "int64",
+      "name": "price",
+      "nullable": false,
+      "range": {
+        "max": null,
+        "min": 1
+      },
+      "source_name": "price"
+    },
+    {
+      "allowed_values": [
+        1,
+        2
+      ],
+      "description": "Whether the price is above the category average. Documented: 1=yes, 2=no. Observed domain 1–2.",
+      "dtype": "int64",
+      "name": "price_2",
+      "nullable": false,
+      "source_name": "price 2"
+    },
+    {
+      "allowed_values": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "description": "Page number within the e-store (documented 1–5). Observed domain 1–5.",
+      "dtype": "int64",
+      "name": "page",
+      "nullable": false,
+      "source_name": "page"
+    }
+  ],
+  "session_key": {
+    "columns": [
+      "year",
+      "month",
+      "day",
+      "session_id"
+    ],
+    "derived_column": "session_key",
+    "format": "YYYY-MM-DD-s<session_id>",
+    "observed_session_count": 24026,
+    "rationale": "Composite key is canonical so sessions stay distinct even if a bare session_id is reused on another day.",
+    "session_id_globally_unique_in_file": true
+  },
+  "sort": {
+    "columns": [
+      "year",
+      "month",
+      "day",
+      "session_id",
+      "order"
+    ],
+    "order": "ascending",
+    "policy": "Click order within a session is defined by 'order'; rows are re-sorted deterministically regardless of on-disk order."
+  },
+  "split": {
+    "rationale": "Sessions are correlated; a random row split leaks future clicks of a session into training. See docs/decisions/0001-no-random-row-split.md.",
+    "strategy": "chronological month-based (never random)",
+    "test_months": [
+      8
+    ],
+    "train_months": [
+      4,
+      5,
+      6
+    ],
+    "validation_months": [
+      7
+    ]
+  },
+  "target": {
+    "classes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "definition": "Within the same verified session (sorted by 'order' ascending), the next click's page_1_main_category (shift(-1)).",
+    "drop_last_click_per_session": true,
+    "name": "next_main_category",
+    "rows_total": 165474,
+    "rows_with_label": 141448,
+    "source_column": "page_1_main_category"
+  }
+}
