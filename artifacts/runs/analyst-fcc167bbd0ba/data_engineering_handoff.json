@@ -1,0 +1,36 @@
+{
+  "clean_data": {
+    "column_count": 15,
+    "path": "artifacts/analyst/clean_data.csv",
+    "row_count": 165474,
+    "sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd"
+  },
+  "dataset_contract": {
+    "contract_version": "1.0.0",
+    "path": "artifacts/analyst/dataset_contract.json",
+    "sha256": "1bf3f25f9ed55f6d27a961691cd097fb4c22fb2517fe6e9f5effd92aa61222d8"
+  },
+  "evidence_refs": [
+    "artifacts/analyst/clean_data.csv",
+    "artifacts/analyst/dataset_contract.json",
+    "artifacts/runs/analyst-fcc167bbd0ba/transformation_audit.json"
+  ],
+  "handoff_path": "artifacts/runs/analyst-fcc167bbd0ba/data_engineering_handoff.json",
+  "handoff_ready": true,
+  "handoff_sha256": "9e2b6b1bdbd7237c1906352b4a36a620a98aae5bb386d787609cc351ea6e6075",
+  "input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+  "issues": [],
+  "run_id": "analyst-fcc167bbd0ba",
+  "status": "PASS",
+  "summary": "Cleaned data produced and validated against the contract.",
+  "transformation_audit": {
+    "fatal_issue_count": 0,
+    "path": "artifacts/runs/analyst-fcc167bbd0ba/transformation_audit.json",
+    "rule_count": 6,
+    "sha256": "6de4f2383c6298b92aa650c176e7bbe3bc44dd09be65b867edfb68e0beb75933"
+  },
+  "validation": {
+    "evidence_ref": "tool:validate_cleaned_handoff#passed",
+    "passed": true
+  }
+}

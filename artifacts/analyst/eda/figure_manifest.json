@@ -1,0 +1,53 @@
+{
+  "figure_count": 6,
+  "figures": [
+    {
+      "caption": "How often each main category is viewed across all sessions.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#main_category.by_category",
+      "figure_id": "fig_category_frequency",
+      "kind": "bar",
+      "title": "Clicks by main product category"
+    },
+    {
+      "caption": "Distribution of how many clicks each session contains.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#clicks_per_session.buckets",
+      "figure_id": "fig_session_depth",
+      "kind": "bar",
+      "title": "Session depth (clicks per session)"
+    },
+    {
+      "caption": "Row-normalized probability of the next click's category given the current one.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#transitions.row_normalized_pct",
+      "figure_id": "fig_transitions",
+      "kind": "heatmap",
+      "title": "Next-category transition probabilities"
+    },
+    {
+      "caption": "Total clicks in each covered month of 2008.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#date_coverage.by_month",
+      "figure_id": "fig_month_activity",
+      "kind": "line",
+      "title": "Clicks per month"
+    },
+    {
+      "caption": "The most active decoded IP-origin countries.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#country.top",
+      "figure_id": "fig_top_countries",
+      "kind": "bar",
+      "title": "Top countries by clicks"
+    },
+    {
+      "caption": "Distribution of listed product prices in US dollars.",
+      "encoding": "image/png;base64 (embedded in eda_report.html)",
+      "evidence_ref": "artifacts/analyst/eda/eda_metrics.json#price",
+      "figure_id": "fig_price_distribution",
+      "kind": "histogram",
+      "title": "Product price distribution"
+    }
+  ]
+}

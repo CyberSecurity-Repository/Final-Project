@@ -7,11 +7,18 @@ tests, this proves the import and configuration paths stay fully offline.
 
 from __future__ import annotations
 
+import os
 import socket
 from collections.abc import Iterator
 from typing import Any
 
 import pytest
+
+# Disable CrewAI/OpenTelemetry background telemetry so importing crewai in the
+# offline suite never attempts a network call.
+os.environ.setdefault("CREWAI_TELEMETRY_OPT_OUT", "true")
+os.environ.setdefault("CREWAI_DISABLE_TELEMETRY", "true")
+os.environ.setdefault("OTEL_SDK_DISABLED", "true")
 
 
 class NoNetworkError(RuntimeError):

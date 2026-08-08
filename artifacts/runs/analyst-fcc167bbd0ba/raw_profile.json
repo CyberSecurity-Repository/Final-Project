@@ -1,0 +1,131 @@
+{
+  "cardinality": {
+    "colour": 14,
+    "country": 47,
+    "day": 31,
+    "location": 6,
+    "model_photography": 2,
+    "month": 5,
+    "order": 195,
+    "page": 5,
+    "page_1_main_category": 4,
+    "page_2_clothing_model": 217,
+    "price": 20,
+    "price_2": 2,
+    "session_id": 24026,
+    "year": 1
+  },
+  "column_names": [
+    "year",
+    "month",
+    "day",
+    "order",
+    "country",
+    "session_id",
+    "page_1_main_category",
+    "page_2_clothing_model",
+    "colour",
+    "location",
+    "model_photography",
+    "price",
+    "price_2",
+    "page"
+  ],
+  "columns": 14,
+  "dtypes": {
+    "colour": "int64",
+    "country": "int64",
+    "day": "int64",
+    "location": "int64",
+    "model_photography": "int64",
+    "month": "int64",
+    "order": "int64",
+    "page": "int64",
+    "page_1_main_category": "int64",
+    "page_2_clothing_model": "string",
+    "price": "int64",
+    "price_2": "int64",
+    "session_id": "int64",
+    "year": "int64"
+  },
+  "full_row_duplicates": 0,
+  "month_distribution": {
+    "4": 48199,
+    "5": 35654,
+    "6": 32242,
+    "7": 35231,
+    "8": 14148
+  },
+  "nulls": {
+    "colour": 0,
+    "country": 0,
+    "day": 0,
+    "location": 0,
+    "model_photography": 0,
+    "month": 0,
+    "order": 0,
+    "page": 0,
+    "page_1_main_category": 0,
+    "page_2_clothing_model": 0,
+    "price": 0,
+    "price_2": 0,
+    "session_id": 0,
+    "year": 0
+  },
+  "numeric_ranges": {
+    "colour": {
+      "max": 14,
+      "min": 1
+    },
+    "country": {
+      "max": 47,
+      "min": 1
+    },
+    "day": {
+      "max": 31,
+      "min": 1
+    },
+    "location": {
+      "max": 6,
+      "min": 1
+    },
+    "model_photography": {
+      "max": 2,
+      "min": 1
+    },
+    "month": {
+      "max": 8,
+      "min": 4
+    },
+    "order": {
+      "max": 195,
+      "min": 1
+    },
+    "page": {
+      "max": 5,
+      "min": 1
+    },
+    "page_1_main_category": {
+      "max": 4,
+      "min": 1
+    },
+    "price": {
+      "max": 82,
+      "min": 18
+    },
+    "price_2": {
+      "max": 2,
+      "min": 1
+    },
+    "session_id": {
+      "max": 24026,
+      "min": 1
+    },
+    "year": {
+      "max": 2008,
+      "min": 2008
+    }
+  },
+  "rows": 165474,
+  "session_count": 24026
+}
