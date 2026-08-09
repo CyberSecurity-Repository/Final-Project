@@ -20,9 +20,6 @@ PROJECT_ROOT: Path = PACKAGE_ROOT.parent
 DATA_DIR: Path = PROJECT_ROOT / "data"
 DATA_RAW: Path = DATA_DIR / "raw"
 
-PROMPTS_DIR: Path = PROJECT_ROOT / "prompts"
-PROMPTS_CREWAI: Path = PROMPTS_DIR / "crewai"
-
 DOCS_DIR: Path = PROJECT_ROOT / "docs"
 
 _DEFAULT_ARTIFACT_ROOT = "artifacts"

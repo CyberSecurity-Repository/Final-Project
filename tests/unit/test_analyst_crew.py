@@ -15,6 +15,7 @@ import pytest
 from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.analyst import models as m
 from retail_clickstream_ai.crews.analyst.crew import build_analyst_crew, run_analyst_crew
+from retail_clickstream_ai.crews.analyst.specs import ANALYST_SPECS
 from retail_clickstream_ai.crews.analyst.tools import build_analyst_tools
 from retail_clickstream_ai.crews.context import AnalystRunContext
 from retail_clickstream_ai.pipeline.analyst_pipeline import prepare_run
@@ -42,13 +43,13 @@ def ctx(monkeypatch, tmp_path) -> AnalystRunContext:
     return context
 
 
-# --- prompt loading -------------------------------------------------------- #
-def test_all_analyst_prompt_files_parse() -> None:
-    assert prompt_loader.load_shared_rules().strip()
-    for path in prompt_loader.ANALYST_PROMPT_FILES:
-        p = prompt_loader.load_agent_prompt(path)
-        assert p.role and p.goal and p.backstory
-        assert p.task_prompt and p.expected_output
+# --- prompt specs ---------------------------------------------------------- #
+def test_all_analyst_specs_populated() -> None:
+    assert prompt_loader.SHARED_RUNTIME_RULES.strip()
+    assert tuple(ANALYST_SPECS) == _ROLES
+    for spec in ANALYST_SPECS.values():
+        assert spec.role and spec.goal and spec.backstory
+        assert spec.task_prompt and spec.expected_output
 
 
 # --- crew wiring ----------------------------------------------------------- #
@@ -58,12 +59,12 @@ def test_crew_has_three_distinct_agents_sequential(ctx) -> None:
     assert len(agents) == 3
     assert len({id(a) for a in agents}) == 3
     assert str(bundle.crew.process) == "Process.sequential"
-    # Roles match the parsed runtime prompts exactly.
-    for role_key, path in zip(_ROLES, prompt_loader.ANALYST_PROMPT_FILES, strict=True):
-        parsed = prompt_loader.load_agent_prompt(path)
-        assert bundle.agents[role_key].role == parsed.role
-        assert bundle.agents[role_key].goal == parsed.goal
-        assert bundle.agents[role_key].backstory == parsed.backstory
+    # Roles match the inline runtime specs exactly.
+    for role_key in _ROLES:
+        spec = ANALYST_SPECS[role_key]
+        assert bundle.agents[role_key].role == spec.role
+        assert bundle.agents[role_key].goal == spec.goal
+        assert bundle.agents[role_key].backstory == spec.backstory
 
 
 def test_tasks_are_ordered_with_growing_context(ctx) -> None:
@@ -77,9 +78,9 @@ def test_tasks_are_ordered_with_growing_context(ctx) -> None:
 def test_each_task_loads_shared_rules_and_its_role_prompt(ctx) -> None:
     mapping = ctx.placeholder_map()
     bundle = build_analyst_crew(ctx, llm=None)
-    for role_key, path in zip(_ROLES, prompt_loader.ANALYST_PROMPT_FILES, strict=True):
-        parsed = prompt_loader.load_agent_prompt(path)
-        filled = prompt_loader.fill_placeholders(parsed.task_prompt, mapping)
+    for role_key in _ROLES:
+        spec = ANALYST_SPECS[role_key]
+        filled = prompt_loader.fill_placeholders(spec.task_prompt, mapping)
         desc = bundle.tasks[role_key].description
         assert "Shared Runtime Rules" in desc  # shared rules present
         assert filled in desc  # the correct role-specific prompt present

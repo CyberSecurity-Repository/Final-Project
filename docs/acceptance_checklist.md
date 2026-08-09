@@ -35,12 +35,12 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | Crew | Agent | Runtime prompt | Stage | Status |
 |---|---|---|---|---|
-| Analyst | Source & Quality Analyst | `prompts/crewai/analyst/01_source_quality_analyst.md` | 3 | ✅ |
-| Analyst | Data Engineer | `prompts/crewai/analyst/02_data_engineer.md` | 3 | ✅ |
-| Analyst | EDA & Business Analyst | `prompts/crewai/analyst/03_eda_business_analyst.md` | 3 | ✅ |
-| Scientist | Contract & Feature Engineer | `prompts/crewai/scientist/01_contract_feature_engineer.md` | 4 | ⬜ |
-| Scientist | Model Trainer | `prompts/crewai/scientist/02_model_trainer.md` | 4 | ⬜ |
-| Scientist | Evaluation & Governance Reviewer | `prompts/crewai/scientist/03_evaluation_governance_reviewer.md` | 4 | ⬜ |
+| Analyst | Source & Quality Analyst | `crews/analyst/specs.py::SOURCE_QUALITY` | 3 | ✅ |
+| Analyst | Data Engineer | `crews/analyst/specs.py::DATA_ENGINEER` | 3 | ✅ |
+| Analyst | EDA & Business Analyst | `crews/analyst/specs.py::EDA_BUSINESS` | 3 | ✅ |
+| Scientist | Contract & Feature Engineer | `crews/scientist/specs.py::CONTRACT_FEATURE_ENGINEER` | 4 | ⬜ |
+| Scientist | Model Trainer | `crews/scientist/specs.py::MODEL_TRAINER` | 4 | ⬜ |
+| Scientist | Evaluation & Governance Reviewer | `crews/scientist/specs.py::EVALUATION_GOVERNANCE` | 4 | ⬜ |
 
 ## Flow requirements
 
