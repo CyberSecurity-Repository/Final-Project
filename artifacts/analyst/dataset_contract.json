@@ -6,6 +6,36 @@
     "Code meanings (category/colour/location/pose/price-2/country labels) come from the dataset description at docs/reference/e-shop_clothing_2008_data_description.txt and are transcribed into a display-only codebook; they are NOT validation constraints.",
     "One row (2008-04-10, session 2766, click 27) is labeled category 2 (skirts) but carries product code A18 (the A/trousers family): a single cross-column inconsistency, left as-is and not enforced."
   ],
+  "cleaned_data": {
+    "column_count": 15,
+    "columns": [
+      "year",
+      "month",
+      "day",
+      "order",
+      "country",
+      "session_id",
+      "page_1_main_category",
+      "page_2_clothing_model",
+      "colour",
+      "location",
+      "model_photography",
+      "price",
+      "price_2",
+      "page",
+      "session_key"
+    ],
+    "committed": true,
+    "delimiter": ",",
+    "encoding": "utf-8",
+    "file": "clean_data.csv",
+    "line_ending": "LF",
+    "note": "Deterministic output of the Stage 3 cleaning pipeline over the verified raw file. A validator proves the produced file's SHA-256 equals the pinned value above.",
+    "path": "artifacts/analyst/clean_data.csv",
+    "row_count": 165474,
+    "sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd",
+    "size_bytes": 9411530
+  },
   "cleaning_rules": [
     "Parse with delimiter ';' and UTF-8/ASCII encoding; the file uses CRLF line endings.",
     "Normalize column names with normalize_column_name (lowercase, non-alphanumeric runs -> single underscore, trimmed).",

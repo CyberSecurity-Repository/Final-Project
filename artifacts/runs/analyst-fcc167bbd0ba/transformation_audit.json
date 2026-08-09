@@ -1,0 +1,88 @@
+{
+  "fatal_issue_count": 0,
+  "input_columns": 14,
+  "input_rows": 165474,
+  "output_columns": 15,
+  "output_rows": 165474,
+  "rows_preserved": true,
+  "rule_count": 6,
+  "rules": [
+    {
+      "affected_rows": 0,
+      "description": "Parse with the verified delimiter/encoding and validate every column type, range, and category against the dataset contract. Fail closed on any fatal issue; never coerce or clip.",
+      "detail": {
+        "validation_issue_count": 0
+      },
+      "name": "parse_and_validate"
+    },
+    {
+      "affected_rows": 0,
+      "description": "Rename source headers to snake_case by the fixed mapping.",
+      "detail": {
+        "renamed": {
+          "model photography": "model_photography",
+          "page 1 (main category)": "page_1_main_category",
+          "page 2 (clothing model)": "page_2_clothing_model",
+          "price 2": "price_2",
+          "session ID": "session_id"
+        }
+      },
+      "name": "normalize_column_names"
+    },
+    {
+      "affected_rows": 0,
+      "description": "Full-row duplicates are rejected, never silently dropped.",
+      "detail": {
+        "policy": "reject"
+      },
+      "name": "reject_full_row_duplicates"
+    },
+    {
+      "affected_rows": 165474,
+      "description": "Add session_key = 'YYYY-MM-DD-s<session_id>' (canonical).",
+      "detail": {
+        "session_count": 24026
+      },
+      "name": "derive_session_key"
+    },
+    {
+      "affected_rows": 0,
+      "description": "Sort by (year, month, day, session_id, order) ascending, stably. Defines click order regardless of on-disk row order.",
+      "detail": {
+        "sort_columns": [
+          "year",
+          "month",
+          "day",
+          "session_id",
+          "order"
+        ]
+      },
+      "name": "canonical_sort"
+    },
+    {
+      "affected_rows": 0,
+      "description": "Emit the fixed output column order (schema + session_key).",
+      "detail": {
+        "columns": [
+          "year",
+          "month",
+          "day",
+          "order",
+          "country",
+          "session_id",
+          "page_1_main_category",
+          "page_2_clothing_model",
+          "colour",
+          "location",
+          "model_photography",
+          "price",
+          "price_2",
+          "page",
+          "session_key"
+        ]
+      },
+      "name": "order_output_columns"
+    }
+  ],
+  "validation_passed": true
+}

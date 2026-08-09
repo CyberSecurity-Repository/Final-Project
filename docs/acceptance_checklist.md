@@ -12,20 +12,20 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | CrewAI | Two crews orchestrated by one CrewAI Flow | 3–5 | ⬜ |
+| 1 | CrewAI | Two crews orchestrated by one CrewAI Flow | 3–5 | 🟡 Analyst crew (3 agents) built; Scientist + Flow next |
 | 2 | Python | `retail_clickstream_ai/` package, Python 3.11+ | 1 | ✅ |
 | 3 | Git + GitHub with Pull Requests | 3 feature branches + 3 documented PRs | 1–8 | 🟡 |
 | 4 | Streamlit (or Flask) | `app.py` Streamlit dashboard | 6 | ⬜ |
-| 5 | Pandas, scikit-learn, Matplotlib/Seaborn | Declared deps; used in pipelines | 1–4 | 🟡 |
+| 5 | Pandas, scikit-learn, Matplotlib/Seaborn | Declared deps; used in pipelines | 1–4 | 🟡 pandas + Matplotlib/Seaborn used (Stage 3); sklearn Stage 4 |
 
 ## Eight required artifacts
 
 | # | Artifact | Path | Stage | Status |
 |---|---|---|---|---|
-| 1 | Clean data | `artifacts/analyst/clean_data.csv` | 3 | ⬜ |
-| 2 | EDA report | `artifacts/analyst/eda_report.html` | 3 | ⬜ |
-| 3 | Insights | `artifacts/analyst/insights.md` | 3 | ⬜ |
-| 4 | Dataset contract | `artifacts/analyst/dataset_contract.json` | 2–3 | 🟡 |
+| 1 | Clean data | `artifacts/analyst/clean_data.csv` | 3 | ✅ |
+| 2 | EDA report | `artifacts/analyst/eda_report.html` | 3 | ✅ |
+| 3 | Insights | `artifacts/analyst/insights.md` | 3 | ✅ |
+| 4 | Dataset contract | `artifacts/analyst/dataset_contract.json` | 2–3 | ✅ (now carries the cleaned-file hash) |
 | 5 | Features | `artifacts/scientist/features.csv` | 4 | ⬜ |
 | 6 | Model | `artifacts/scientist/model.joblib` | 4 | ⬜ |
 | 7 | Evaluation report | `artifacts/scientist/evaluation_report.md` | 4 | ⬜ |
@@ -35,19 +35,19 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | Crew | Agent | Runtime prompt | Stage | Status |
 |---|---|---|---|---|
-| Analyst | Source & Quality Analyst | `prompts/crewai/analyst/01_source_quality_analyst.md` | 3 | ⬜ |
-| Analyst | Data Engineer | `prompts/crewai/analyst/02_data_engineer.md` | 3 | ⬜ |
-| Analyst | EDA & Business Analyst | `prompts/crewai/analyst/03_eda_business_analyst.md` | 3 | ⬜ |
-| Scientist | Contract & Feature Engineer | `prompts/crewai/scientist/01_contract_feature_engineer.md` | 4 | ⬜ |
-| Scientist | Model Trainer | `prompts/crewai/scientist/02_model_trainer.md` | 4 | ⬜ |
-| Scientist | Evaluation & Governance Reviewer | `prompts/crewai/scientist/03_evaluation_governance_reviewer.md` | 4 | ⬜ |
+| Analyst | Source & Quality Analyst | `crews/analyst/specs.py::SOURCE_QUALITY` | 3 | ✅ |
+| Analyst | Data Engineer | `crews/analyst/specs.py::DATA_ENGINEER` | 3 | ✅ |
+| Analyst | EDA & Business Analyst | `crews/analyst/specs.py::EDA_BUSINESS` | 3 | ✅ |
+| Scientist | Contract & Feature Engineer | `crews/scientist/specs.py::CONTRACT_FEATURE_ENGINEER` | 4 | ⬜ |
+| Scientist | Model Trainer | `crews/scientist/specs.py::MODEL_TRAINER` | 4 | ⬜ |
+| Scientist | Evaluation & Governance Reviewer | `crews/scientist/specs.py::EVALUATION_GOVERNANCE` | 4 | ⬜ |
 
 ## Flow requirements
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
 | 1 | Automated Analyst → Scientist handoff | Flow passes typed state only after Analyst gate | 5 | ⬜ |
-| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | 🟡 |
+| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | ✅ validator built (`validation/artifacts.py`); Flow gate wiring Stage 5 |
 | 3 | Required features exist before modeling | Deterministic model gate | 4–5 | ⬜ |
 | 4 | Reproducibility | Seeds, chronological split, lock, run manifest, hashes, logs | 1–5 | 🟡 |
 | 5 | Graceful failure | Failed gate → `failure_report.json` + remediation; downstream blocked | 5 | ⬜ |

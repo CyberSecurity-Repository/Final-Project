@@ -1,0 +1,15 @@
+{
+  "acquisition_method": "Kaggle CLI (slug tunguz/clickstream-data-for-online-shopping); not committed.",
+  "data_description_file": "docs/reference/e-shop_clothing_2008_data_description.txt",
+  "dataset_name": "Clickstream Data for Online Shopping",
+  "documented_time_period": "April–August 2008 (five months)",
+  "evidence_status": "documented (publisher) — confirm against observed validation",
+  "expected_input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+  "input_sha256_matches_contract": true,
+  "kaggle_url": "https://www.kaggle.com/datasets/tunguz/clickstream-data-for-online-shopping",
+  "license": "CC BY 4.0",
+  "observed_input_sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d",
+  "primary_documentation_url": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping",
+  "publisher": "Mariusz Łapczyński and Sylwester Białowąs (UCI Machine Learning Repository, dataset 553)",
+  "source_url": "https://archive.ics.uci.edu/dataset/553/clickstream+data+for+online+shopping"
+}

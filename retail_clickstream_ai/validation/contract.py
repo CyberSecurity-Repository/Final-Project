@@ -34,6 +34,22 @@ RAW_COLUMN_COUNT = 14
 OBSERVED_SESSION_COUNT = 24026
 OBSERVED_MONTHS = (4, 5, 6, 7, 8)
 
+# --------------------------------------------------------------------------- #
+# Verified CLEANED-file facts (Stage 3). The cleaned CSV is a deterministic
+# function of the verified raw file, so its hash/size are as much a measured
+# constant as RAW_SHA256 — pinning them here keeps the contract fully
+# reproducible offline (build() needs no file) while letting a validator prove
+# the produced clean_data.csv matches. Cleaning is non-destructive: same row
+# count as the raw file, plus the derived session_key column (14 -> 15).
+# --------------------------------------------------------------------------- #
+CLEAN_SHA256 = "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd"
+CLEAN_SIZE_BYTES = 9411530
+CLEAN_ROW_COUNT = 165474
+CLEAN_COLUMN_COUNT = 15
+CLEAN_DELIMITER = ","
+CLEAN_ENCODING = "utf-8"
+CLEAN_LINE_ENDING = "LF"
+
 # Chronological, session-safe split (never a random row split).
 TRAIN_MONTHS = (4, 5, 6)
 VALIDATION_MONTHS = (7,)
@@ -308,6 +324,22 @@ class DatasetContract:
                 },
             },
             "schema": [c.to_dict() for c in _SCHEMA],
+            "cleaned_data": {
+                "file": "clean_data.csv",
+                "path": "artifacts/analyst/clean_data.csv",
+                "sha256": CLEAN_SHA256,
+                "size_bytes": CLEAN_SIZE_BYTES,
+                "row_count": CLEAN_ROW_COUNT,
+                "column_count": CLEAN_COLUMN_COUNT,
+                "delimiter": CLEAN_DELIMITER,
+                "encoding": CLEAN_ENCODING,
+                "line_ending": CLEAN_LINE_ENDING,
+                "columns": list(d.REQUIRED_OUTPUT_COLUMNS),
+                "committed": True,
+                "note": "Deterministic output of the Stage 3 cleaning pipeline over "
+                "the verified raw file. A validator proves the produced file's "
+                "SHA-256 equals the pinned value above.",
+            },
             "session_key": {
                 "derived_column": d.SESSION_KEY,
                 "columns": list(d.SESSION_KEY_COLUMNS),
@@ -378,6 +410,30 @@ class DatasetContract:
     @property
     def raw_sha256(self) -> str:
         return str(self.data["dataset"]["raw_file"]["sha256"])
+
+    @property
+    def cleaned_data(self) -> dict[str, Any]:
+        return dict(self.data["cleaned_data"])
+
+    @property
+    def cleaned_sha256(self) -> str:
+        return str(self.data["cleaned_data"]["sha256"])
+
+    @property
+    def cleaned_columns(self) -> list[str]:
+        return list(self.data["cleaned_data"]["columns"])
+
+    @property
+    def cleaned_row_count(self) -> int:
+        return int(self.data["cleaned_data"]["row_count"])
+
+    @property
+    def cleaned_column_count(self) -> int:
+        return int(self.data["cleaned_data"]["column_count"])
+
+    @property
+    def cleaned_size_bytes(self) -> int:
+        return int(self.data["cleaned_data"]["size_bytes"])
 
     @property
     def session_key_columns(self) -> list[str]:

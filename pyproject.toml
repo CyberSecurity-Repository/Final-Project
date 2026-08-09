@@ -65,6 +65,13 @@ ignore = []
 [tool.ruff.lint.isort]
 known-first-party = ["retail_clickstream_ai"]
 
+[tool.ruff.lint.per-file-ignores]
+# Runtime agent prompts are authored verbatim as inline strings. Wrapping a prose
+# line would insert a newline into the text the agent receives, changing the
+# prompt — so line length is not enforced on the prompt-carrying modules.
+"retail_clickstream_ai/crews/prompts.py" = ["E501"]
+"retail_clickstream_ai/crews/*/specs.py" = ["E501"]
+
 [tool.pytest.ini_options]
 minversion = "7.0"
 testpaths = ["tests"]
