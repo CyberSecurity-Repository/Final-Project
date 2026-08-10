@@ -1,0 +1,8 @@
+{
+  "candidates": [
+    "baseline_transition",
+    "logistic_regression",
+    "random_forest"
+  ],
+  "results_file": "artifacts/scientist/candidate_results.json"
+}

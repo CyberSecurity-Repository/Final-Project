@@ -1,0 +1,54 @@
+{
+  "candidate_artifact_manifest": {
+    "path": "artifacts/runs/scientist-2d256c2ecb34/candidate_artifact_manifest.json",
+    "sha256": "6fa9ec90014cec631b0407832b5990b19c405d6681fbd64e969724454ec7410b"
+  },
+  "candidate_results": {
+    "all_required_candidates_present": true,
+    "candidate_count": 3,
+    "path": "artifacts/scientist/candidate_results.json",
+    "sha256": "c1c6b0c7ae13f94fe8d432e13dd4f6fab40e135a8a10e52cc61e705a9b7de5f6"
+  },
+  "evidence_refs": [
+    "artifacts/scientist/candidate_results.json",
+    "artifacts/scientist/experiment_config.json"
+  ],
+  "experiment_config": {
+    "path": "artifacts/scientist/experiment_config.json",
+    "primary_metric": "macro_f1",
+    "seed": 42,
+    "sha256": "96651377a7859e341fffb61e6a4f0fc788d673c61e7d2372c30b36ed8cd8e2c6"
+  },
+  "handoff_path": "artifacts/runs/scientist-2d256c2ecb34/training_handoff.json",
+  "handoff_ready": true,
+  "handoff_sha256": "2593589f7d4b39940646abd067bdbdb3253f2c58632859a341067e8c2e208b5b",
+  "issues": [],
+  "run_id": "scientist-2d256c2ecb34",
+  "status": "PASS",
+  "summary": "Baseline + two model variations compared on validation; test untouched.",
+  "test_accessed": false,
+  "validation": {
+    "evidence_ref": "tool:validate_training_outputs#passed",
+    "passed": true
+  },
+  "validation_ranking": [
+    {
+      "candidate_id": "baseline_transition",
+      "evidence_ref": "candidate_results.json#candidates.baseline_transition.metrics.macro_f1",
+      "macro_f1": 0.81303,
+      "rank": 1
+    },
+    {
+      "candidate_id": "logistic_regression",
+      "evidence_ref": "candidate_results.json#candidates.logistic_regression.metrics.macro_f1",
+      "macro_f1": 0.812528,
+      "rank": 2
+    },
+    {
+      "candidate_id": "random_forest",
+      "evidence_ref": "candidate_results.json#candidates.random_forest.metrics.macro_f1",
+      "macro_f1": 0.806282,
+      "rank": 3
+    }
+  ]
+}

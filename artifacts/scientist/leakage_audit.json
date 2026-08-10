@@ -1,0 +1,104 @@
+{
+  "checks": [
+    {
+      "detail": "every features target equals the same session's next-click category",
+      "name": "target_shift_within_session",
+      "passed": true,
+      "severity": "fatal"
+    },
+    {
+      "detail": "rows=141448 expected=141448; last-clicks present=0",
+      "name": "final_clicks_removed",
+      "passed": true,
+      "severity": "fatal"
+    },
+    {
+      "detail": "unexpected/forbidden columns=[]; target_in_predictors=False",
+      "name": "no_forbidden_future_columns",
+      "passed": true,
+      "severity": "fatal"
+    },
+    {
+      "detail": "predictors_stable=True, target_moved=True (2->3)",
+      "name": "past_aggregates_no_future_leak",
+      "passed": true,
+      "severity": "fatal"
+    },
+    {
+      "detail": "disjoint=True no_unknown=True month_map_ok=True",
+      "name": "month_split_boundaries_exact",
+      "passed": true,
+      "severity": "fatal"
+    },
+    {
+      "detail": "each split contains all target classes and at least 4 rows",
+      "name": "splits_have_all_classes_and_rows",
+      "passed": true,
+      "severity": "fatal"
+    }
+  ],
+  "n_clean_rows": 165474,
+  "n_feature_rows": 141448,
+  "n_sessions": 24026,
+  "passed": true,
+  "split_manifest": {
+    "all_classes_present_each_split": true,
+    "policy": "April-June train; July validation; August test",
+    "splits": {
+      "test": {
+        "all_classes_present": true,
+        "class_counts": {
+          "1": 3326,
+          "2": 2345,
+          "3": 2891,
+          "4": 3662
+        },
+        "rows": 12224,
+        "sessions": 1552
+      },
+      "train": {
+        "all_classes_present": true,
+        "class_counts": {
+          "1": 28381,
+          "2": 23476,
+          "3": 24268,
+          "4": 22939
+        },
+        "rows": 99064,
+        "sessions": 13399
+      },
+      "validation": {
+        "all_classes_present": true,
+        "class_counts": {
+          "1": 8788,
+          "2": 6115,
+          "3": 6973,
+          "4": 8284
+        },
+        "rows": 30160,
+        "sessions": 4033
+      }
+    },
+    "strategy": "chronological month-based (never random)",
+    "target_classes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "test_months": [
+      8
+    ],
+    "test_rows": 12224,
+    "train_months": [
+      4,
+      5,
+      6
+    ],
+    "train_rows": 99064,
+    "validation_months": [
+      7
+    ],
+    "validation_rows": 30160
+  }
+}

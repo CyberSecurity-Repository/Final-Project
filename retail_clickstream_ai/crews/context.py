@@ -98,3 +98,92 @@ class AnalystRunContext:
             pin_hash=pin_hash,
             require_all_months=require_all_months,
         )
+
+
+@dataclass(frozen=True)
+class ScientistRunContext:
+    """Trusted, run-scoped locations + identity for one Scientist run.
+
+    Its input is the validated Analyst output: ``clean_data.csv`` (hashed as the
+    run's input) and ``dataset_contract.json``. The four required Scientist
+    artifacts plus the machine-readable evidence land in ``scientist_dir``; the
+    structured handoff records land under ``run_dir``. ``pin_hash`` is relaxed
+    only for synthetic test fixtures that intentionally differ from the pinned
+    production data.
+    """
+
+    run_id: str
+    input_sha256: str
+    model_name: str | None
+    repository_root: Path
+    artifact_root: Path
+    analyst_dir: Path
+    scientist_dir: Path
+    run_dir: Path
+    pin_hash: bool = True
+
+    # -- derived, trusted input/output file locations ---------------------- #
+    @property
+    def clean_data_path(self) -> Path:
+        return self.analyst_dir / "clean_data.csv"
+
+    @property
+    def dataset_contract_path(self) -> Path:
+        return self.analyst_dir / "dataset_contract.json"
+
+    @property
+    def experiment_config_path(self) -> Path:
+        return self.scientist_dir / "experiment_config.json"
+
+    @property
+    def analyst_handoff_path(self) -> Path | None:
+        """Newest committed Analyst crew handoff, if any run produced one."""
+        candidates = sorted(paths.runs_artifacts().glob("analyst-*/analyst_crew_handoff.json"))
+        return candidates[-1] if candidates else None
+
+    def within_root(self, path: Path) -> bool:
+        """True when ``path`` resolves inside the trusted repository root."""
+        try:
+            Path(path).resolve().relative_to(self.repository_root)
+            return True
+        except ValueError:
+            return False
+
+    def placeholder_map(self) -> dict[str, str]:
+        """Runtime placeholder substitutions for the Scientist task prompts."""
+        handoff = self.analyst_handoff_path
+        return {
+            "run_id": self.run_id,
+            "repository_root": str(self.repository_root),
+            "artifact_root": rel(self.artifact_root),
+            "input_sha256": self.input_sha256,
+            "openai_model_name": self.model_name or "(resolved from OPENAI_MODEL_NAME)",
+            "analyst_handoff_path": rel(handoff) if handoff else "(no analyst handoff on disk)",
+            "clean_data_path": rel(self.clean_data_path),
+            "dataset_contract_path": rel(self.dataset_contract_path),
+            "experiment_config_path": rel(self.experiment_config_path),
+        }
+
+    @classmethod
+    def build(
+        cls,
+        *,
+        run_id: str | None = None,
+        model_name: str | None = None,
+        pin_hash: bool = True,
+    ) -> ScientistRunContext:
+        """Build a context by hashing the validated cleaned data as the input."""
+        analyst_dir = paths.analyst_artifacts()
+        sha = d.sha256_file(analyst_dir / "clean_data.csv")
+        rid = run_id or f"scientist-{sha[:12]}"
+        return cls(
+            run_id=rid,
+            input_sha256=sha,
+            model_name=model_name,
+            repository_root=paths.PROJECT_ROOT,
+            artifact_root=paths.artifact_root(),
+            analyst_dir=analyst_dir,
+            scientist_dir=paths.scientist_artifacts(),
+            run_dir=paths.runs_artifacts() / rid,
+            pin_hash=pin_hash,
+        )

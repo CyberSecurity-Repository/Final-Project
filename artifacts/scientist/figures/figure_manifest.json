@@ -1,0 +1,18 @@
+{
+  "figures": [
+    {
+      "evidence_ref": "metrics.json#validation.confusion_matrix",
+      "figure_id": "confusion_matrix_validation",
+      "kind": "heatmap",
+      "path": "artifacts/scientist/figures/confusion_matrix_validation.png",
+      "split": "validation"
+    },
+    {
+      "evidence_ref": "metrics.json#test.confusion_matrix",
+      "figure_id": "confusion_matrix_test",
+      "kind": "heatmap",
+      "path": "artifacts/scientist/figures/confusion_matrix_test.png",
+      "split": "test"
+    }
+  ]
+}

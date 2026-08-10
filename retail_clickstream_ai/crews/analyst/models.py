@@ -46,7 +46,10 @@ class CheckItem(_Strict):
 
 class ValidationResult(_Strict):
     passed: bool
-    evidence_ref: str
+    # Descriptive citation. Optional so an LLM agent's final structured answer that
+    # omits it still parses; the deterministic validators are the real authority
+    # for `passed`, and PASS invariants never depend on this field.
+    evidence_ref: str | None = None
 
 
 class SourceInfo(_Strict):

@@ -1,0 +1,96 @@
+{
+  "artifact_sha256": "b3a442546a75debcf6dadd33bb957a209185ea0a2a8a7d7934b3e8894701e080",
+  "class_mapping": {
+    "class_to_label": {
+      "1": "trousers",
+      "2": "skirts",
+      "3": "blouses",
+      "4": "sale"
+    },
+    "index_to_class": {
+      "0": 1,
+      "1": 2,
+      "2": 3,
+      "3": 4
+    }
+  },
+  "feature_list": [
+    "current_main_category",
+    "prev_main_category",
+    "colour",
+    "location",
+    "model_photography",
+    "price_2",
+    "page",
+    "country",
+    "price",
+    "clicks_so_far",
+    "distinct_categories_so_far",
+    "count_current_category_so_far"
+  ],
+  "features_sha256": "037e7cd7b379c0c212c2e149f4bfd1d3d4a1d8583abd90e2b25e481535f79bb8",
+  "hyperparameters": {},
+  "input_schema": {
+    "categorical_features": [
+      "current_main_category",
+      "prev_main_category",
+      "colour",
+      "location",
+      "model_photography",
+      "price_2",
+      "page",
+      "country"
+    ],
+    "dtypes": {
+      "clicks_so_far": "int64",
+      "colour": "int64",
+      "count_current_category_so_far": "int64",
+      "country": "int64",
+      "current_main_category": "int64",
+      "distinct_categories_so_far": "int64",
+      "location": "int64",
+      "model_photography": "int64",
+      "page": "int64",
+      "prev_main_category": "int64",
+      "price": "int64",
+      "price_2": "int64"
+    },
+    "numeric_features": [
+      "price",
+      "clicks_so_far",
+      "distinct_categories_so_far",
+      "count_current_category_so_far"
+    ],
+    "predictor_columns": [
+      "current_main_category",
+      "prev_main_category",
+      "colour",
+      "location",
+      "model_photography",
+      "price_2",
+      "page",
+      "country",
+      "price",
+      "clicks_so_far",
+      "distinct_categories_so_far",
+      "count_current_category_so_far"
+    ]
+  },
+  "metrics_file": "artifacts/scientist/metrics.json",
+  "metrics_sha256": "d74718d27008bd81a7ceb981ff587f85ea9f0deadf3483f9a2019867152c55c5",
+  "package_versions": {
+    "joblib": "1.5.3",
+    "numpy": "2.5.1",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.18.0"
+  },
+  "python_version": "3.13.9",
+  "round_trip_validated": true,
+  "security_note": "model.joblib is pickle-based. Load ONLY the trusted, repo-produced, hash-verified artifact; never load a joblib file from an untrusted source.",
+  "seed": 42,
+  "selected_candidate_id": "baseline_transition",
+  "selected_model": "current_category_transition_baseline",
+  "target": "next_main_category",
+  "training_data_sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd"
+}
