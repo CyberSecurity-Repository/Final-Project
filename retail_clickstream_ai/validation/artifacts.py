@@ -196,6 +196,168 @@ def _check_text_markers(
         )
 
 
+def validate_scientist_artifacts(
+    *,
+    features_path: str | Path,
+    model_path: str | Path,
+    eval_report_path: str | Path,
+    model_card_path: str | Path,
+    metrics_path: str | Path,
+    metadata_path: str | Path,
+) -> ValidationReport:
+    """Validate the four required Scientist artifacts and their agreement.
+
+    Checks: presence + non-empty for each required file; features table exposes
+    the predictor/split/target columns; both reports contain their required
+    sections; the trusted model round-trips (loads and predicts on the test
+    split with a 4-class probability output); ``model_metadata.json`` hashes match
+    the on-disk metrics/model; and both reports are exactly the deterministic
+    render of ``metrics.json`` (so every reported number agrees with machine
+    output). An LLM never decides any of these.
+    """
+    import json
+
+    from retail_clickstream_ai.pipeline import features as feat
+    from retail_clickstream_ai.reporting.model_report import (
+        REQUIRED_EVAL_REPORT_MARKERS,
+        REQUIRED_MODEL_CARD_MARKERS,
+        render_evaluation_report,
+        render_model_card,
+    )
+
+    report = ValidationReport()
+
+    features = Path(features_path)
+    model = Path(model_path)
+    eval_report = Path(eval_report_path)
+    model_card = Path(model_card_path)
+    metrics_file = Path(metrics_path)
+    metadata_file = Path(metadata_path)
+
+    features_ok = _add_file_presence(features, "features.csv", report)
+    model_ok = _add_file_presence(model, "model.joblib", report)
+    eval_ok = _add_file_presence(eval_report, "evaluation_report.md", report)
+    card_ok = _add_file_presence(model_card, "model_card.md", report)
+    metrics_ok = _add_file_presence(metrics_file, "metrics.json", report)
+    metadata_ok = _add_file_presence(metadata_file, "model_metadata.json", report)
+
+    # Feature table exposes the declared predictor/split/target columns.
+    if features_ok:
+        cols = set(pd.read_csv(features, nrows=0).columns)
+        required = {*feat.PREDICTOR_COLUMNS, feat.SPLIT_COLUMN, feat.TARGET}
+        missing = sorted(required - cols)
+        if missing:
+            report.add(
+                ValidationIssue(
+                    rule="features_schema",
+                    column="features.csv",
+                    message="features table is missing required columns",
+                    observed=f"missing {missing}",
+                    expected="all predictor + split + target columns",
+                )
+            )
+
+    # Required report sections.
+    if eval_ok:
+        _check_text_markers(
+            eval_report, "evaluation_report.md", REQUIRED_EVAL_REPORT_MARKERS, report
+        )
+    if card_ok:
+        _check_text_markers(model_card, "model_card.md", REQUIRED_MODEL_CARD_MARKERS, report)
+
+    # Metadata hash consistency.
+    metadata: dict[str, object] = {}
+    if metadata_ok:
+        metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+        if metrics_ok and metadata.get("metrics_sha256") != d.sha256_file(metrics_file):
+            report.add(
+                ValidationIssue(
+                    rule="metrics_hash_mismatch",
+                    column="model_metadata.json",
+                    message="metadata metrics_sha256 does not match metrics.json",
+                    observed=str(metadata.get("metrics_sha256")),
+                    expected=d.sha256_file(metrics_file),
+                )
+            )
+        if model_ok and metadata.get("artifact_sha256") != d.sha256_file(model):
+            report.add(
+                ValidationIssue(
+                    rule="artifact_hash_mismatch",
+                    column="model_metadata.json",
+                    message="metadata artifact_sha256 does not match model.joblib",
+                    observed=str(metadata.get("artifact_sha256")),
+                    expected=d.sha256_file(model),
+                )
+            )
+        if metadata.get("round_trip_validated") is not True:
+            report.add(
+                ValidationIssue(
+                    rule="round_trip_not_validated",
+                    column="model_metadata.json",
+                    message="model was not recorded as round-trip validated",
+                    observed=str(metadata.get("round_trip_validated")),
+                    expected="True",
+                )
+            )
+
+    # Trusted model round-trip: load the repo-produced artifact and predict.
+    if model_ok and features_ok:
+        try:
+            import joblib
+
+            # Safe: loading the trusted, repo-produced artifact under validation.
+            estimator = joblib.load(model)
+            frame = feat.read_features_csv(features)
+            test_rows = frame[frame[feat.SPLIT_COLUMN] == "test"]
+            sample = test_rows.head(256) if len(test_rows) else frame.head(256)
+            X = sample.loc[:, list(feat.PREDICTOR_COLUMNS)]
+            preds = estimator.predict(X)
+            if len(preds) != len(sample):
+                raise ValueError("prediction length mismatch")
+            proba = estimator.predict_proba(X)
+            if proba.shape[1] != 4:
+                raise ValueError(f"expected 4-class probabilities, got {proba.shape[1]}")
+        except Exception as exc:  # noqa: BLE001 - any load/predict failure fails the gate
+            report.add(
+                ValidationIssue(
+                    rule="model_round_trip_failed",
+                    column="model.joblib",
+                    message="trusted model failed to load or predict",
+                    observed=str(exc),
+                    expected="loads and predicts a 4-class probability output",
+                )
+            )
+
+    # Reports are exactly the deterministic render of the machine metrics.
+    if metrics_ok and eval_ok:
+        metrics = json.loads(metrics_file.read_text(encoding="utf-8"))
+        expected_eval, _ = render_evaluation_report(metrics)
+        if eval_report.read_text(encoding="utf-8") != expected_eval:
+            report.add(
+                ValidationIssue(
+                    rule="evaluation_report_mismatch",
+                    column="evaluation_report.md",
+                    message="report is not the deterministic render of metrics.json",
+                    observed="<differs>",
+                    expected="render_evaluation_report(metrics.json)",
+                )
+            )
+        if card_ok and metadata_ok:
+            expected_card, _ = render_model_card(metrics, metadata)
+            if model_card.read_text(encoding="utf-8") != expected_card:
+                report.add(
+                    ValidationIssue(
+                        rule="model_card_mismatch",
+                        column="model_card.md",
+                        message="model card is not the deterministic render of metrics/metadata",
+                        observed="<differs>",
+                        expected="render_model_card(metrics.json, model_metadata.json)",
+                    )
+                )
+
+    return report
+
+
 def validate_analyst_artifacts(
     *,
     clean_path: str | Path,

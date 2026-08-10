@@ -1,0 +1,79 @@
+{
+  "evidence_refs": [
+    "artifacts/scientist/features.csv",
+    "artifacts/scientist/model.joblib",
+    "artifacts/scientist/evaluation_report.md",
+    "artifacts/scientist/model_card.md"
+  ],
+  "handoff_path": "artifacts/runs/scientist-2d256c2ecb34/scientist_crew_handoff.json",
+  "handoff_ready": true,
+  "handoff_sha256": "c3b3abafe28bce34b44741d78a19169520141bc16998179441337dcff6684c21",
+  "issues": [],
+  "limitations": [
+    {
+      "evidence_ref": "artifacts/scientist/model_card.md#limitations",
+      "statement": "Data is from 2008; not current-market evidence."
+    },
+    {
+      "evidence_ref": "artifacts/scientist/metrics.json#validation_ranking",
+      "statement": "A strong same-category baseline is hard to beat; no significance claimed."
+    },
+    {
+      "evidence_ref": "artifacts/scientist/model_metadata.json#security_note",
+      "statement": "model.joblib is pickle-based; load only the trusted hash-verified artifact."
+    }
+  ],
+  "metrics": {
+    "path": "artifacts/scientist/metrics.json",
+    "sha256": "d74718d27008bd81a7ceb981ff587f85ea9f0deadf3483f9a2019867152c55c5"
+  },
+  "model_metadata": {
+    "path": "artifacts/scientist/model_metadata.json",
+    "round_trip_validated": true,
+    "sha256": "028cbcc305e95b6a9afdfdfd9d5c0587d8c884ca1f4a1d7309e08bf14c251a71"
+  },
+  "required_artifacts": [
+    {
+      "name": "features.csv",
+      "path": "artifacts/scientist/features.csv",
+      "sha256": "037e7cd7b379c0c212c2e149f4bfd1d3d4a1d8583abd90e2b25e481535f79bb8",
+      "size_bytes": 9992393
+    },
+    {
+      "name": "model.joblib",
+      "path": "artifacts/scientist/model.joblib",
+      "sha256": "b3a442546a75debcf6dadd33bb957a209185ea0a2a8a7d7934b3e8894701e080",
+      "size_bytes": 893
+    },
+    {
+      "name": "evaluation_report.md",
+      "path": "artifacts/scientist/evaluation_report.md",
+      "sha256": "b0481ea540f2d33e10e3ff21e80aaae4351546276128c4522f58174d4a84b7d5",
+      "size_bytes": 3991
+    },
+    {
+      "name": "model_card.md",
+      "path": "artifacts/scientist/model_card.md",
+      "sha256": "7755746542d2ceb1b1bc8bb2501e29a9ad6d3c1819a4e53c7decc579c8e8067b",
+      "size_bytes": 2919
+    }
+  ],
+  "run_id": "scientist-2d256c2ecb34",
+  "selection": {
+    "primary_metric": "macro_f1",
+    "selected_candidate_id": "baseline_transition",
+    "selection_evidence_ref": "artifacts/scientist/metrics.json#validation.macro_f1",
+    "validation_metric_value": 0.81303
+  },
+  "status": "PASS",
+  "summary": "Scientist crew complete: winner 'baseline_transition' selected on validation macro F1 and evaluated once on the held-out test month.",
+  "test_evaluation": {
+    "evidence_ref": "artifacts/scientist/metrics.json#test.macro_f1",
+    "macro_f1": 0.819539,
+    "performed_once": true
+  },
+  "validation": {
+    "evidence_ref": "tool:validate_scientist_artifacts#passed",
+    "passed": true
+  }
+}

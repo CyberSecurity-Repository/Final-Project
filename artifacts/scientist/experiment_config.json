@@ -1,0 +1,66 @@
+{
+  "candidates": [
+    {
+      "candidate_id": "baseline_transition",
+      "estimator": "CurrentCategoryTransitionBaseline",
+      "family": "current_category_transition_baseline",
+      "hyperparameters": [
+        {}
+      ]
+    },
+    {
+      "candidate_id": "logistic_regression",
+      "estimator": "LogisticRegression",
+      "family": "multinomial_logistic_regression",
+      "hyperparameters": [
+        {
+          "C": 0.5
+        },
+        {
+          "C": 1.0
+        }
+      ]
+    },
+    {
+      "candidate_id": "random_forest",
+      "estimator": "RandomForestClassifier",
+      "family": "random_forest",
+      "hyperparameters": [
+        {
+          "max_depth": null,
+          "n_estimators": 200
+        },
+        {
+          "max_depth": 20,
+          "n_estimators": 200
+        }
+      ]
+    }
+  ],
+  "classes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "preprocessing": {
+    "categorical": "OneHotEncoder(handle_unknown='ignore')",
+    "numeric_logreg": "StandardScaler",
+    "numeric_rf": "passthrough"
+  },
+  "primary_metric": "macro_f1",
+  "secondary_metrics": [
+    "accuracy",
+    "weighted_f1",
+    "log_loss",
+    "per_class_precision_recall_f1"
+  ],
+  "seed": 42,
+  "selection_rule": "highest validation macro_f1; tie-break: weighted_f1 desc, accuracy desc, log_loss asc, candidate_id asc",
+  "tie_break": [
+    "weighted_f1_desc",
+    "accuracy_desc",
+    "log_loss_asc",
+    "candidate_id_asc"
+  ]
+}

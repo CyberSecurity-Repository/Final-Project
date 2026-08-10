@@ -1,0 +1,210 @@
+{
+  "candidates": {
+    "baseline_transition": {
+      "accuracy": 0.815948,
+      "best_params": {},
+      "family": "current_category_transition_baseline",
+      "log_loss": 0.674866,
+      "macro_f1": 0.81303,
+      "weighted_f1": 0.815967
+    },
+    "logistic_regression": {
+      "accuracy": 0.815418,
+      "best_params": {
+        "C": 0.5
+      },
+      "family": "multinomial_logistic_regression",
+      "log_loss": 0.656709,
+      "macro_f1": 0.812528,
+      "weighted_f1": 0.815441
+    },
+    "random_forest": {
+      "accuracy": 0.809284,
+      "best_params": {
+        "max_depth": 20,
+        "n_estimators": 200
+      },
+      "family": "random_forest",
+      "log_loss": 0.679668,
+      "macro_f1": 0.806282,
+      "weighted_f1": 0.809284
+    }
+  },
+  "class_labels": {
+    "1": "trousers",
+    "2": "skirts",
+    "3": "blouses",
+    "4": "sale"
+  },
+  "classes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "primary_metric": "macro_f1",
+  "seed": 42,
+  "selected_candidate_id": "baseline_transition",
+  "selected_model": "current_category_transition_baseline",
+  "selection_rule": "highest validation macro_f1; tie-break: weighted_f1 desc, accuracy desc, log_loss asc, candidate_id asc",
+  "split_counts": {
+    "test_rows": 12224,
+    "test_sessions": 1552,
+    "train_rows": 99064,
+    "train_sessions": 13399,
+    "validation_rows": 30160,
+    "validation_sessions": 4033
+  },
+  "test": {
+    "accuracy": 0.823707,
+    "class_distribution": {
+      "1": 3326,
+      "2": 2345,
+      "3": 2891,
+      "4": 3662
+    },
+    "confusion_matrix": [
+      [
+        2888,
+        133,
+        174,
+        131
+      ],
+      [
+        242,
+        1869,
+        124,
+        110
+      ],
+      [
+        259,
+        234,
+        2245,
+        153
+      ],
+      [
+        217,
+        127,
+        251,
+        3067
+      ]
+    ],
+    "log_loss": 0.652668,
+    "macro_f1": 0.819539,
+    "per_class": {
+      "1": {
+        "f1": 0.833237,
+        "precision": 0.800887,
+        "recall": 0.86831,
+        "support": 3326
+      },
+      "2": {
+        "f1": 0.793968,
+        "precision": 0.790944,
+        "recall": 0.797015,
+        "support": 2345
+      },
+      "3": {
+        "f1": 0.789798,
+        "precision": 0.803508,
+        "recall": 0.776548,
+        "support": 2891
+      },
+      "4": {
+        "f1": 0.861154,
+        "precision": 0.88616,
+        "recall": 0.83752,
+        "support": 3662
+      }
+    },
+    "weighted_f1": 0.823794
+  },
+  "timing": {
+    "winner_inference_seconds": 0.0041,
+    "winner_train_seconds": 0.0271
+  },
+  "validation": {
+    "accuracy": 0.815948,
+    "class_distribution": {
+      "1": 8788,
+      "2": 6115,
+      "3": 6973,
+      "4": 8284
+    },
+    "confusion_matrix": [
+      [
+        7527,
+        420,
+        466,
+        375
+      ],
+      [
+        633,
+        4863,
+        332,
+        287
+      ],
+      [
+        687,
+        534,
+        5398,
+        354
+      ],
+      [
+        540,
+        336,
+        587,
+        6821
+      ]
+    ],
+    "log_loss": 0.674866,
+    "macro_f1": 0.81303,
+    "per_class": {
+      "1": {
+        "f1": 0.828281,
+        "precision": 0.801854,
+        "recall": 0.856509,
+        "support": 8788
+      },
+      "2": {
+        "f1": 0.792794,
+        "precision": 0.790346,
+        "recall": 0.795258,
+        "support": 6115
+      },
+      "3": {
+        "f1": 0.784821,
+        "precision": 0.795813,
+        "recall": 0.774129,
+        "support": 6973
+      },
+      "4": {
+        "f1": 0.846225,
+        "precision": 0.870359,
+        "recall": 0.823394,
+        "support": 8284
+      }
+    },
+    "weighted_f1": 0.815967
+  },
+  "validation_ranking": [
+    {
+      "candidate_id": "baseline_transition",
+      "evidence_ref": "candidate_results.json#candidates.baseline_transition.metrics.macro_f1",
+      "macro_f1": 0.81303,
+      "rank": 1
+    },
+    {
+      "candidate_id": "logistic_regression",
+      "evidence_ref": "candidate_results.json#candidates.logistic_regression.metrics.macro_f1",
+      "macro_f1": 0.812528,
+      "rank": 2
+    },
+    {
+      "candidate_id": "random_forest",
+      "evidence_ref": "candidate_results.json#candidates.random_forest.metrics.macro_f1",
+      "macro_f1": 0.806282,
+      "rank": 3
+    }
+  ]
+}

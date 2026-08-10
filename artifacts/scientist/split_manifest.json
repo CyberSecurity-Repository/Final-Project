@@ -1,0 +1,60 @@
+{
+  "all_classes_present_each_split": true,
+  "policy": "April-June train; July validation; August test",
+  "splits": {
+    "test": {
+      "all_classes_present": true,
+      "class_counts": {
+        "1": 3326,
+        "2": 2345,
+        "3": 2891,
+        "4": 3662
+      },
+      "rows": 12224,
+      "sessions": 1552
+    },
+    "train": {
+      "all_classes_present": true,
+      "class_counts": {
+        "1": 28381,
+        "2": 23476,
+        "3": 24268,
+        "4": 22939
+      },
+      "rows": 99064,
+      "sessions": 13399
+    },
+    "validation": {
+      "all_classes_present": true,
+      "class_counts": {
+        "1": 8788,
+        "2": 6115,
+        "3": 6973,
+        "4": 8284
+      },
+      "rows": 30160,
+      "sessions": 4033
+    }
+  },
+  "strategy": "chronological month-based (never random)",
+  "target_classes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_months": [
+    8
+  ],
+  "test_rows": 12224,
+  "train_months": [
+    4,
+    5,
+    6
+  ],
+  "train_rows": 99064,
+  "validation_months": [
+    7
+  ],
+  "validation_rows": 30160
+}

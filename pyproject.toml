@@ -71,6 +71,10 @@ known-first-party = ["retail_clickstream_ai"]
 # prompt — so line length is not enforced on the prompt-carrying modules.
 "retail_clickstream_ai/crews/prompts.py" = ["E501"]
 "retail_clickstream_ai/crews/*/specs.py" = ["E501"]
+# The Scientist report renderer authors narrative prose verbatim; wrapping a line
+# would insert a newline into the rendered evaluation_report.md / model_card.md
+# text, so line length is not enforced there (same reason as the prompt modules).
+"retail_clickstream_ai/reporting/model_report.py" = ["E501"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
