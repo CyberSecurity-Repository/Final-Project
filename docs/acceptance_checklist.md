@@ -12,7 +12,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | CrewAI | Two crews orchestrated by one CrewAI Flow | 3–5 | 🟡 Analyst + Scientist crews (6 agents) built; Flow next |
+| 1 | CrewAI | Two crews orchestrated by one CrewAI Flow | 3–5 | ✅ two crews (6 agents) orchestrated by one CrewAI Flow (`flow.py`) |
 | 2 | Python | `retail_clickstream_ai/` package, Python 3.11+ | 1 | ✅ |
 | 3 | Git + GitHub with Pull Requests | 3 feature branches + 3 documented PRs | 1–8 | 🟡 |
 | 4 | Streamlit (or Flask) | `app.py` Streamlit dashboard | 6 | ⬜ |
@@ -46,11 +46,11 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | Automated Analyst → Scientist handoff | Flow passes typed state only after Analyst gate | 5 | ⬜ |
-| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | ✅ validator built (`validation/artifacts.py`); Flow gate wiring Stage 5 |
-| 3 | Required features exist before modeling | Deterministic model gate | 4–5 | 🟡 feature handoff + `validate_scientist_artifacts` gate built; Flow wiring Stage 5 |
-| 4 | Reproducibility | Seeds, chronological split, lock, run manifest, hashes, logs | 1–5 | 🟡 seed 42, month split, features byte-reproducible, hashes/handoffs (Stage 4); Flow manifest Stage 5 |
-| 5 | Graceful failure | Failed gate → `failure_report.json` + remediation; downstream blocked | 5 | ⬜ |
+| 1 | Automated Analyst → Scientist handoff | Flow passes typed state only after Analyst gate | 5 | ✅ `flow.py` routes to the Scientist crew only after the deterministic Analyst gate; call order proven in `tests/integration/test_flow.py` |
+| 2 | Contract matches cleaned dataset | Deterministic validator in Analyst gate | 3–5 | ✅ Analyst gate calls `validate_analyst_artifacts` (`validation/artifacts.py`) — the Flow owns the pass/fail |
+| 3 | Required features exist before modeling | Deterministic model gate | 4–5 | ✅ model gate calls `validate_scientist_artifacts` (+ trusted-hash pre-check) before any manifest |
+| 4 | Reproducibility | Seeds, chronological split, lock, run manifest, hashes, logs | 1–5 | ✅ `artifacts/runs/<run_id>/run_manifest.json` records statuses, durations, hashes, package version; sequential only; no auto-retry on gate failure |
+| 5 | Graceful failure | Failed gate → `failure_report.json` + remediation; downstream blocked | 5 | ✅ terminal handler writes `failure_report.json` (failed step, rules, observed, remediation, downstream blocked); 8 Flow integration tests |
 
 ## Anti-leakage & correctness controls
 
@@ -75,7 +75,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | 🟡 |
+| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | 🟡 134 tests pass (126 unit + 8 Flow integration, mocked crew boundary); CI wiring Stage 7 |
 | 2 | Lint / format / type check | `ruff`, `mypy` configured in `pyproject.toml` | 1 | ✅ |
 | 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ⬜ |
 | 4 | No secrets / raw dataset tracked | `.gitignore`; diff scan | 1–7 | ✅ |
