@@ -30,10 +30,27 @@ from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.analyst.specs import ANALYST_SPECS
 from retail_clickstream_ai.crews.analyst.tools import build_analyst_tools
 from retail_clickstream_ai.crews.context import AnalystRunContext
+from retail_clickstream_ai.crews.guardrails import build_handoff_guardrail
 
-# Fixed per-role settings taken from the runtime prompt specs.
+# Fixed per-role settings taken from the runtime prompt specs. max_iter =
+# mandatory-tool-count + 1 (native tool calling: every iteration is one tool call
+# or the terminal answer, never a free reasoning-only turn) + 3 spare.
 _ROLE_ORDER = ("source_quality", "data_engineer", "eda_business")
-_MAX_ITER = {"source_quality": 6, "data_engineer": 6, "eda_business": 8}
+_MAX_ITER = {"source_quality": 8, "data_engineer": 7, "eda_business": 9}
+
+# The handoff file + terminal write tool each role's completion guardrail checks
+# for (see crews/guardrails.py) — the backstop for a weak model stopping early.
+_HANDOFF_FILENAMES = {
+    "source_quality": "source_quality_review.json",
+    "data_engineer": "data_engineering_handoff.json",
+    "eda_business": "analyst_crew_handoff.json",
+}
+_HANDOFF_TOOL_NAMES = {
+    "source_quality": "write_source_quality_review",
+    "data_engineer": "write_data_engineering_handoff",
+    "eda_business": "write_analyst_handoff",
+}
+_GUARDRAIL_MAX_RETRIES = {"source_quality": 3, "data_engineer": 3, "eda_business": 3}
 
 
 @dataclass
@@ -91,6 +108,12 @@ def build_analyst_crew(
             tools=role_tools[role_key],
             context=list(ordered_tasks),  # explicit upstream context references
             name=f"analyst_{role_key}",
+            guardrail=build_handoff_guardrail(
+                context,
+                handoff_filename=_HANDOFF_FILENAMES[role_key],
+                tool_name=_HANDOFF_TOOL_NAMES[role_key],
+            ),
+            guardrail_max_retries=_GUARDRAIL_MAX_RETRIES[role_key],
         )
         agents[role_key] = agent
         tasks[role_key] = task

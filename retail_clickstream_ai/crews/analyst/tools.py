@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict
 
 from retail_clickstream_ai.crews.analyst import models as m
 from retail_clickstream_ai.crews.context import AnalystRunContext
-from retail_clickstream_ai.crews.io_helpers import rel, stamp_and_write
+from retail_clickstream_ai.crews.io_helpers import missing_prerequisites, rel, stamp_and_write
 from retail_clickstream_ai.pipeline import cleaning, eda
 from retail_clickstream_ai.pipeline import data as d
 from retail_clickstream_ai.reporting.eda_report import render_eda_report
@@ -240,6 +240,19 @@ class WriteDataEngineeringHandoffTool(_ContextTool):
         contract_path = self.context.analyst_dir / "dataset_contract.json"
         audit_path = self.context.run_dir / "transformation_audit.json"
 
+        missing = missing_prerequisites(clean_path, contract_path, audit_path)
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`run_cleaning_pipeline` first, then retry "
+                        f"`write_data_engineering_handoff`."
+                    )
+                }
+            )
+
         report = artifact_validation.validate_clean_file_against_contract(
             clean_path,
             contract,
@@ -418,6 +431,25 @@ class WriteAnalystHandoffTool(_ContextTool):
     def _run(self, record: dict[str, Any] | None = None) -> str:
         contract = DatasetContract.build()
         analyst_dir = self.context.analyst_dir
+
+        missing = missing_prerequisites(
+            analyst_dir / "clean_data.csv",
+            analyst_dir / "eda_report.html",
+            analyst_dir / "insights.md",
+            analyst_dir / "dataset_contract.json",
+        )
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`run_eda_pipeline` and `render_analyst_reports` first, then "
+                        f"retry `write_analyst_handoff`."
+                    )
+                }
+            )
+
         report = artifact_validation.validate_analyst_artifacts(
             clean_path=analyst_dir / "clean_data.csv",
             eda_report_path=analyst_dir / "eda_report.html",

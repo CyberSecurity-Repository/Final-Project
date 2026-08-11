@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 
 import pytest
+from crewai import TaskOutput
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.analyst.crew import build_analyst_crew, run_analyst_crew
@@ -24,6 +25,11 @@ REPO = Path(__file__).resolve().parents[2]
 FIXTURE = REPO / "tests" / "fixtures" / "clickstream_sample.csv"
 
 _ROLES = ("source_quality", "data_engineer", "eda_business")
+
+
+def _guardrail_probe_output() -> TaskOutput:
+    """A minimal, valid TaskOutput — only description/agent are required."""
+    return TaskOutput(description="task", agent="agent", raw="agent's raw final answer")
 
 
 @pytest.fixture
@@ -70,6 +76,34 @@ def test_tasks_are_ordered_with_growing_context(ctx) -> None:
         # machine-stamped handoff fields); the write_* tools persist the validated
         # handoff to disk and the deterministic gates are the authority.
         assert bundle.tasks[role_key].output_pydantic is None
+
+
+def test_tasks_are_wired_with_handoff_guardrails(ctx) -> None:
+    """Every task has a completion guardrail — the backstop for a weak model that
+    stops calling tools before reaching its terminal write_* tool."""
+    bundle = build_analyst_crew(ctx, llm=None)
+    expected_retries = {"source_quality": 3, "data_engineer": 3, "eda_business": 3}
+    for role_key in _ROLES:
+        task = bundle.tasks[role_key]
+        assert task.guardrail is not None
+        assert task.guardrail_max_retries == expected_retries[role_key]
+
+
+def test_data_engineer_guardrail_blocks_until_handoff_written(ctx) -> None:
+    bundle = build_analyst_crew(ctx, llm=None)
+    guardrail = bundle.tasks["data_engineer"].guardrail
+
+    # No tool has run yet in this run — the guardrail must refuse.
+    ok, message = guardrail(_guardrail_probe_output())
+    assert ok is False
+    assert "write_data_engineering_handoff" in message
+
+    # Drive the real tool chain, then the same stored guardrail must pass.
+    tools = {t.name: t for group in build_analyst_tools(ctx).values() for t in group}
+    tools["run_cleaning_pipeline"]._run()
+    tools["write_data_engineering_handoff"]._run()
+    ok2, output2 = guardrail(_guardrail_probe_output())
+    assert ok2 is True
 
 
 def test_each_task_loads_shared_rules_and_its_role_prompt(ctx) -> None:
@@ -119,6 +153,24 @@ def test_write_tool_derives_status_from_evidence(ctx) -> None:
 
     # With no agent record at all, the tool still writes a valid, evidence-backed handoff.
     assert json.loads(tools["write_source_quality_review"]._run())["status"] == "PASS"
+
+
+def test_write_data_engineering_handoff_reports_missing_prerequisite(ctx) -> None:
+    """If an agent jumps to the terminal tool before run_cleaning_pipeline, it gets a
+    clear message — not a raw exception — and no handoff is written."""
+    tools = {t.name: t for group in build_analyst_tools(ctx).values() for t in group}
+    out = json.loads(tools["write_data_engineering_handoff"]._run())
+    assert "error" in out
+    assert "run_cleaning_pipeline" in out["error"]
+    assert not (ctx.run_dir / "data_engineering_handoff.json").exists()
+
+
+def test_write_analyst_handoff_reports_missing_prerequisite(ctx) -> None:
+    tools = {t.name: t for group in build_analyst_tools(ctx).values() for t in group}
+    out = json.loads(tools["write_analyst_handoff"]._run())
+    assert "error" in out
+    assert "run_eda_pipeline" in out["error"]
+    assert not (ctx.run_dir / "analyst_crew_handoff.json").exists()
 
 
 # --- mocked run path (no real OpenAI call) --------------------------------- #
