@@ -3,11 +3,17 @@
 Wires the inline runtime prompts (``scientist/specs.py`` plus the shared rules in
 ``crews/prompts.py``) to three agents — Contract & Feature Engineer, Model
 Trainer, and Evaluation & Governance Reviewer — each restricted to the tools its
-prompt allows, each returning a validated Pydantic structured output, running as
-a ``Process.sequential`` crew with explicit task context references. The heavy
-lifting is done by the deterministic tools; the agents interpret and assemble the
-handoffs, and the one-time held-out test evaluation lives entirely inside the
+prompt allows, each writing a validated Pydantic handoff to disk through its tools,
+running as a ``Process.sequential`` crew with explicit task context references. The
+heavy lifting is done by the deterministic tools; the agents interpret and assemble
+the handoffs, and the one-time held-out test evaluation lives entirely inside the
 governance tool.
+
+Tasks intentionally do **not** set ``output_pydantic``: the ``write_*`` tools already
+persist a fully validated handoff (via ``stamp_and_write``), so coercing each agent's
+free-text final answer back into the strict model is redundant and makes weak models
+crash on machine-only fields (content hashes, sizes) they cannot author. The
+deterministic validators/gates remain the sole authority on pass/fail.
 
 Building a crew needs no API key (so tests can inspect it offline); credentials
 are required only by :func:`run_scientist_crew`, which starts a real LLM run.
@@ -23,7 +29,6 @@ from crewai.tools import BaseTool
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.context import ScientistRunContext
-from retail_clickstream_ai.crews.scientist import models as m
 from retail_clickstream_ai.crews.scientist.specs import SCIENTIST_SPECS
 from retail_clickstream_ai.crews.scientist.tools import build_scientist_tools
 
@@ -33,11 +38,6 @@ _MAX_ITER = {
     "contract_feature_engineer": 7,
     "model_trainer": 7,
     "evaluation_governance": 9,
-}
-_OUTPUT_MODEL: dict[str, type] = {
-    "contract_feature_engineer": m.FeatureEngineeringHandoff,
-    "model_trainer": m.TrainingRunHandoff,
-    "evaluation_governance": m.ScientistCrewHandoff,
 }
 
 
@@ -94,7 +94,6 @@ def build_scientist_crew(
             expected_output=prompt_loader.fill_placeholders(spec.expected_output, mapping),
             agent=agent,
             tools=role_tools[role_key],
-            output_pydantic=_OUTPUT_MODEL[role_key],
             context=list(ordered_tasks),  # explicit upstream context references
             name=f"scientist_{role_key}",
         )

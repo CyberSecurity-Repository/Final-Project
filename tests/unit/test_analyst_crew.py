@@ -13,7 +13,6 @@ from pathlib import Path
 import pytest
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
-from retail_clickstream_ai.crews.analyst import models as m
 from retail_clickstream_ai.crews.analyst.crew import build_analyst_crew, run_analyst_crew
 from retail_clickstream_ai.crews.analyst.specs import ANALYST_SPECS
 from retail_clickstream_ai.crews.analyst.tools import build_analyst_tools
@@ -25,11 +24,6 @@ REPO = Path(__file__).resolve().parents[2]
 FIXTURE = REPO / "tests" / "fixtures" / "clickstream_sample.csv"
 
 _ROLES = ("source_quality", "data_engineer", "eda_business")
-_EXPECTED_MODEL = {
-    "source_quality": m.SourceQualityReview,
-    "data_engineer": m.DataEngineeringHandoff,
-    "eda_business": m.AnalystCrewHandoff,
-}
 
 
 @pytest.fixture
@@ -72,7 +66,10 @@ def test_tasks_are_ordered_with_growing_context(ctx) -> None:
     ctx_lengths = [len(bundle.tasks[r].context) for r in _ROLES]
     assert ctx_lengths == [0, 1, 2]  # each task references its predecessors
     for role_key in _ROLES:
-        assert bundle.tasks[role_key].output_pydantic is _EXPECTED_MODEL[role_key]
+        # Tasks intentionally set no output_pydantic (weak models can't author the
+        # machine-stamped handoff fields); the write_* tools persist the validated
+        # handoff to disk and the deterministic gates are the authority.
+        assert bundle.tasks[role_key].output_pydantic is None
 
 
 def test_each_task_loads_shared_rules_and_its_role_prompt(ctx) -> None:
