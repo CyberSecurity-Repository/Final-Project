@@ -98,8 +98,6 @@ class FeatureEngineeringHandoff(_Strict):
                 problems.append("split_manifest path and sha256 must be set")
             if self.feature_schema_path is None:
                 problems.append("feature_schema_path must be set")
-            if self.handoff_path is None or self.handoff_sha256 is None:
-                problems.append("handoff_path and handoff_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
@@ -171,8 +169,6 @@ class TrainingRunHandoff(_Strict):
                 problems.append("all_required_candidates_present must be true")
             if self.candidate_results.path is None or self.candidate_results.sha256 is None:
                 problems.append("candidate_results path and sha256 must be set")
-            if self.handoff_path is None or self.handoff_sha256 is None:
-                problems.append("handoff_path and handoff_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
@@ -250,8 +246,6 @@ class ScientistCrewHandoff(_Strict):
                 problems.append("metrics path and sha256 must be set")
             if self.model_metadata.path is None or self.model_metadata.sha256 is None:
                 problems.append("model_metadata path and sha256 must be set")
-            if self.handoff_path is None or self.handoff_sha256 is None:
-                problems.append("handoff_path and handoff_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
