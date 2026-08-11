@@ -100,15 +100,25 @@ def test_tools_run_offline_without_network(ctx, no_network) -> None:
     assert json.loads(tools["validate_analyst_artifacts"].run())["passed"] is True
 
 
-def test_write_tools_reject_false_pass(ctx) -> None:
-    from pydantic import ValidationError
+def test_write_tool_derives_status_from_evidence(ctx) -> None:
+    import json
 
     tools = {t.name: t for group in build_analyst_tools(ctx).values() for t in group}
-    # A PASS review with handoff_ready False must be rejected by the model.
-    with pytest.raises(ValidationError):
-        tools["write_source_quality_review"]._run(
-            record={"status": "PASS", "summary": "x", "source": {}, "handoff_ready": False}
-        )
+    # The tool builds the handoff from the trusted on-disk evidence and ignores any
+    # status/handoff_ready the agent tries to inject — so a *false PASS* (or here, a
+    # false BLOCKED) cannot be forced, and a weak/empty LLM answer cannot crash it.
+    out = tools["write_source_quality_review"]._run(
+        record={"status": "BLOCKED", "handoff_ready": False, "summary": "agent note"}
+    )
+    assert json.loads(out)["status"] == "PASS"  # evidence-derived, not the injected value
+    written = json.loads((ctx.run_dir / "source_quality_review.json").read_text(encoding="utf-8"))
+    assert written["status"] == "PASS"
+    assert written["handoff_ready"] is True
+    assert written["summary"] == "agent note"  # only the interpretive summary is honored
+    assert written["review_sha256"] and written["review_sha256"] != "pending"
+
+    # With no agent record at all, the tool still writes a valid, evidence-backed handoff.
+    assert json.loads(tools["write_source_quality_review"]._run())["status"] == "PASS"
 
 
 # --- mocked run path (no real OpenAI call) --------------------------------- #
