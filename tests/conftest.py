@@ -19,6 +19,9 @@ import pytest
 os.environ.setdefault("CREWAI_TELEMETRY_OPT_OUT", "true")
 os.environ.setdefault("CREWAI_DISABLE_TELEMETRY", "true")
 os.environ.setdefault("OTEL_SDK_DISABLED", "true")
+# Suppress CrewAI's version-availability check (a network round-trip) so the Flow
+# integration tests stay fully offline and quiet.
+os.environ.setdefault("CREWAI_DISABLE_VERSION_CHECK", "true")
 
 
 class NoNetworkError(RuntimeError):
@@ -93,6 +96,18 @@ def synthetic_clean_frame() -> Any:
         raw, DatasetContract.build(), require_all_months=True
     )
     return clean_df
+
+
+@pytest.fixture
+def synthetic_raw_path(tmp_path: Any) -> Any:
+    """Write a contract-valid synthetic raw CSV (raw headers) and return its path.
+
+    Reused by the Stage 5 Flow integration tests, which drive the whole Flow over a
+    tmp ``ARTIFACT_ROOT`` with the crew boundary mocked.
+    """
+    raw_path = tmp_path / "synthetic_raw.csv"
+    _synthetic_raw_frame().to_csv(raw_path, sep=";", index=False)
+    return raw_path
 
 
 @pytest.fixture

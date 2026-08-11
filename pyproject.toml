@@ -29,6 +29,11 @@ dependencies = [
     "python-dotenv",   # local .env loading (never required to import the package)
 ]
 
+[project.scripts]
+# Documented CLI entry point for a full Flow run (prepare -> Analyst -> gate ->
+# Scientist -> gate -> manifest). Equivalent to `python -m retail_clickstream_ai.flow`.
+retail-clickstream-flow = "retail_clickstream_ai.flow:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest",
