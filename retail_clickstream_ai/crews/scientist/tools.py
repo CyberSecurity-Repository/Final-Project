@@ -21,7 +21,12 @@ from crewai.tools import BaseTool
 from pydantic import BaseModel, ConfigDict
 
 from retail_clickstream_ai.crews.context import ScientistRunContext
-from retail_clickstream_ai.crews.io_helpers import rel, stamp_and_write, write_json
+from retail_clickstream_ai.crews.io_helpers import (
+    missing_prerequisites,
+    rel,
+    stamp_and_write,
+    write_json,
+)
 from retail_clickstream_ai.crews.scientist import models as m
 from retail_clickstream_ai.pipeline import cleaning
 from retail_clickstream_ai.pipeline import data as d
@@ -223,6 +228,19 @@ class WriteFeatureEngineeringHandoffTool(_ContextTool):
         manifest_path = sci / "split_manifest.json"
         audit_path = sci / "leakage_audit.json"
 
+        missing = missing_prerequisites(features_path, schema_path, manifest_path, audit_path)
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`run_feature_pipeline` and `run_leakage_audit` first, then retry "
+                        f"`write_feature_engineering_handoff`."
+                    )
+                }
+            )
+
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         audit = json.loads(audit_path.read_text(encoding="utf-8"))
@@ -383,6 +401,17 @@ class WriteTrainingHandoffTool(_ContextTool):
         config_path = M.write_experiment_config(self.context.experiment_config_path)
         cfg = M.experiment_config()
         results_path = sci / "candidate_results.json"
+        missing = missing_prerequisites(results_path)
+        if missing:
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact: {results_path.name}. Call "
+                        f"`run_candidate_experiments` first, then retry "
+                        f"`write_training_handoff`."
+                    )
+                }
+            )
         results = json.loads(results_path.read_text(encoding="utf-8"))
         check = M.validate_training_outputs(results)
         passed = bool(check["passed"]) and check["test_accessed"] is False
@@ -645,6 +674,26 @@ class WriteScientistHandoffTool(_ContextTool):
         metrics_path = sci / "metrics.json"
         metadata_path = sci / "model_metadata.json"
         model_path = sci / "model.joblib"
+
+        missing = missing_prerequisites(
+            sci / "features.csv",
+            model_path,
+            sci / "evaluation_report.md",
+            sci / "model_card.md",
+            metrics_path,
+            metadata_path,
+        )
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`lock_winner_and_evaluate_test` and `render_scientist_reports` "
+                        f"first, then retry `write_scientist_handoff`."
+                    )
+                }
+            )
 
         report = artifact_validation.validate_scientist_artifacts(
             features_path=sci / "features.csv",

@@ -11,6 +11,7 @@ import json
 from typing import Any
 
 import pytest
+from crewai import TaskOutput
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.context import ScientistRunContext
@@ -19,6 +20,11 @@ from retail_clickstream_ai.crews.scientist.specs import SCIENTIST_SPECS
 from retail_clickstream_ai.crews.scientist.tools import build_scientist_tools
 
 _ROLES = ("contract_feature_engineer", "model_trainer", "evaluation_governance")
+
+
+def _guardrail_probe_output() -> TaskOutput:
+    """A minimal, valid TaskOutput — only description/agent are required."""
+    return TaskOutput(description="task", agent="agent", raw="agent's raw final answer")
 
 
 @pytest.fixture
@@ -65,6 +71,41 @@ def test_tasks_are_ordered_with_growing_context(ctx: ScientistRunContext) -> Non
         # machine-stamped handoff fields); the write_* tools persist the validated
         # handoff to disk and the deterministic gates are the authority.
         assert bundle.tasks[role_key].output_pydantic is None
+
+
+def test_tasks_are_wired_with_handoff_guardrails(ctx: ScientistRunContext) -> None:
+    """Every task has a completion guardrail — the backstop for a weak model that
+    stops calling tools before reaching its terminal write_* tool."""
+    bundle = build_scientist_crew(ctx, llm=None)
+    expected_retries = {
+        "contract_feature_engineer": 4,
+        "model_trainer": 3,
+        "evaluation_governance": 4,
+    }
+    for role_key in _ROLES:
+        task = bundle.tasks[role_key]
+        assert task.guardrail is not None
+        assert task.guardrail_max_retries == expected_retries[role_key]
+
+
+def test_contract_feature_engineer_guardrail_blocks_until_handoff_written(
+    ctx: ScientistRunContext,
+) -> None:
+    bundle = build_scientist_crew(ctx, llm=None)
+    guardrail = bundle.tasks["contract_feature_engineer"].guardrail
+
+    # No tool has run yet in this run — the guardrail must refuse.
+    ok, message = guardrail(_guardrail_probe_output())
+    assert ok is False
+    assert "write_feature_engineering_handoff" in message
+
+    # Drive the real tool chain, then the same stored guardrail must pass.
+    tools = _flat_tools(ctx)
+    tools["run_feature_pipeline"]._run()
+    tools["run_leakage_audit"]._run()
+    tools["write_feature_engineering_handoff"]._run()
+    ok2, _ = guardrail(_guardrail_probe_output())
+    assert ok2 is True
 
 
 def test_each_task_loads_shared_rules_and_its_role_prompt(ctx: ScientistRunContext) -> None:
@@ -159,6 +200,34 @@ def test_write_tool_derives_status_from_evidence(ctx: ScientistRunContext) -> No
 
     # With no agent record at all, the tool still writes a valid, evidence-backed handoff.
     assert json.loads(tools["write_feature_engineering_handoff"]._run())["status"] == "PASS"
+
+
+def test_write_feature_engineering_handoff_reports_missing_prerequisite(
+    ctx: ScientistRunContext,
+) -> None:
+    """If an agent jumps to the terminal tool before run_feature_pipeline, it gets a
+    clear message — not a raw exception — and no handoff is written."""
+    tools = _flat_tools(ctx)
+    out = json.loads(tools["write_feature_engineering_handoff"]._run())
+    assert "error" in out
+    assert "run_feature_pipeline" in out["error"]
+    assert not (ctx.run_dir / "feature_engineering_handoff.json").exists()
+
+
+def test_write_training_handoff_reports_missing_prerequisite(ctx: ScientistRunContext) -> None:
+    tools = _flat_tools(ctx)
+    out = json.loads(tools["write_training_handoff"]._run())
+    assert "error" in out
+    assert "run_candidate_experiments" in out["error"]
+    assert not (ctx.run_dir / "training_handoff.json").exists()
+
+
+def test_write_scientist_handoff_reports_missing_prerequisite(ctx: ScientistRunContext) -> None:
+    tools = _flat_tools(ctx)
+    out = json.loads(tools["write_scientist_handoff"]._run())
+    assert "error" in out
+    assert "lock_winner_and_evaluate_test" in out["error"]
+    assert not (ctx.run_dir / "scientist_crew_handoff.json").exists()
 
 
 # --- mocked run path (no real OpenAI call) --------------------------------- #

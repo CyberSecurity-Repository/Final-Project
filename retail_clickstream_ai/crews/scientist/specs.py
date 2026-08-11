@@ -60,7 +60,19 @@ The Flow must have run its Analyst gate before starting this crew. You must stil
 - Do not train, tune, rank, select, or evaluate models.
 - Do not inspect August test outcomes for feature design.
 - Do not add a feature because it improves a score unless it was predeclared and passes leakage checks.
-- Do not alter split boundaries or class labels inside the agent response.""",
+- Do not alter split boundaries or class labels inside the agent response.
+
+### Completion checklist
+
+This task is not finished until all five of these tools have been called, in this order, in this run:
+
+1. `validate_analyst_handoff`
+2. `run_feature_pipeline`
+3. `run_leakage_audit`
+4. `validate_feature_handoff`
+5. `write_feature_engineering_handoff`
+
+Reasoning through leakage, splits, or feature design in your own words is not a substitute for the tool call that actually performs that check. A Final Answer submitted before `write_feature_engineering_handoff` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `FeatureEngineeringHandoff`:
 
@@ -163,7 +175,18 @@ Run the candidate training comparison for `{run_id}`.
 - Do not evaluate, inspect, summarize, or request test-set results.
 - Do not discard a weak or failed candidate from the comparison.
 - Do not claim statistical significance.
-- Do not write `model.joblib`, `evaluation_report.md`, or `model_card.md`.""",
+- Do not write `model.joblib`, `evaluation_report.md`, or `model_card.md`.
+
+### Completion checklist
+
+This task is not finished until all four of these tools have been called, in this order, in this run:
+
+1. `read_experiment_config`
+2. `run_candidate_experiments`
+3. `validate_training_outputs`
+4. `write_training_handoff`
+
+A Final Answer submitted before `write_training_handoff` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `TrainingRunHandoff`:
 
@@ -292,7 +315,20 @@ Review, lock, evaluate, and report the final model for run `{run_id}`.
 - Do not hide minority-class weakness, warnings, failed candidates, or performance regressions.
 - Do not compare validation and test metrics as though both were used for selection.
 - Do not claim causality, present-day retail validity, production readiness, fairness certification, or statistical significance.
-- Do not directly load, modify, or serialize a model binary.""",
+- Do not directly load, modify, or serialize a model binary.
+
+### Completion checklist
+
+This task is not finished until all six of these tools have been called, in this order, in this run:
+
+1. `validate_training_handoff`
+2. `lock_winner_and_evaluate_test`
+3. `read_evaluation_bundle`
+4. `render_scientist_reports`
+5. `validate_scientist_artifacts`
+6. `write_scientist_handoff`
+
+A Final Answer submitted before `write_scientist_handoff` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `ScientistCrewHandoff`:
 

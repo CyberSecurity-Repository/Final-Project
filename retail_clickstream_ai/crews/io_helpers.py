@@ -36,6 +36,16 @@ def write_json(path: Path, payload: Any) -> Path:
     return out
 
 
+def missing_prerequisites(*paths_: Path) -> list[Path]:
+    """Return the subset of ``paths_`` that do not exist or are empty.
+
+    Used by a terminal ``write_*`` tool to detect that an agent called it before
+    an earlier tool in its own chain produced the artifact it needs, so the tool
+    can return an actionable message instead of raising on a missing file.
+    """
+    return [p for p in paths_ if not p.exists() or p.stat().st_size == 0]
+
+
 def content_sha(model: Any, self_fields: set[str]) -> str:
     """SHA-256 of a Pydantic record's content, excluding its self-reference fields."""
     content = model.model_dump(exclude=self_fields)
