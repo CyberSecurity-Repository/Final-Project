@@ -123,9 +123,14 @@ def test_source_review_pass_requires_handoff_ready() -> None:
         _source_review(handoff_ready=False)
 
 
-def test_source_review_pass_requires_written_review() -> None:
-    with pytest.raises(ValidationError):
-        _source_review(review_path=None)
+def test_source_review_pass_allows_unstamped_self_reference() -> None:
+    # The self-reference stamp (review_path/review_sha256) is written by the tool via
+    # stamp_and_write, not authored by the LLM — the model no longer requires it for a
+    # PASS, so a weak model's final answer can't crash CrewAI's output_pydantic
+    # coercion. The real evidence guards (handoff_ready, no fatal issue) still apply.
+    r = _source_review(review_path=None, review_sha256=None)
+    assert r.status == "PASS"
+    assert r.review_path is None
 
 
 def test_source_review_pass_rejects_fatal_issue() -> None:
