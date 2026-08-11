@@ -45,7 +45,20 @@ class _NoArgs(BaseModel):
 
 class _WriteRecordArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    record: dict[str, Any]
+    # Optional: the tool builds the machine-truth record from the trusted on-disk
+    # artifacts; the agent need only supply an interpretive ``summary`` (any other
+    # keys are ignored). This makes the handoff robust to any/empty LLM output and
+    # makes a false PASS or a malformed record impossible.
+    record: dict[str, Any] | None = None
+
+
+def _opt_summary(record: dict[str, Any] | None, default: str) -> str:
+    """Take a non-empty ``summary`` from the agent's record, else use ``default``."""
+    if isinstance(record, dict):
+        text = record.get("summary")
+        if isinstance(text, str) and text.strip():
+            return text.strip()
+    return default
 
 
 class _ContextTool(BaseTool):
@@ -196,17 +209,65 @@ class ValidateFeatureHandoffTool(_ContextTool):
 
 class WriteFeatureEngineeringHandoffTool(_ContextTool):
     name: str = "write_feature_engineering_handoff"
-    description: str = "Validate and persist the structured FeatureEngineeringHandoff record."
+    description: str = (
+        "Persist the feature-engineering handoff. The tool builds the machine record "
+        "(paths, hashes, counts, pass/fail) from the trusted on-disk artifacts; you may "
+        "supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("input_sha256", self.context.input_sha256)
-        record.setdefault(
-            "handoff_path", rel(self.context.run_dir / "feature_engineering_handoff.json")
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        sci = self.context.scientist_dir
+        features_path = sci / "features.csv"
+        schema_path = sci / "feature_schema.json"
+        manifest_path = sci / "split_manifest.json"
+        audit_path = sci / "leakage_audit.json"
+
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        audit = json.loads(audit_path.read_text(encoding="utf-8"))
+        passed = bool(audit.get("passed"))
+        row_count = int(
+            manifest.get("train_rows", 0)
+            + manifest.get("validation_rows", 0)
+            + manifest.get("test_rows", 0)
         )
-        record.setdefault("handoff_sha256", "pending")
-        handoff = m.FeatureEngineeringHandoff.model_validate(record)
+
+        handoff = m.FeatureEngineeringHandoff(
+            status="PASS" if passed else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record, "Leakage-safe features built; leakage audit checked; split applied."
+            ),
+            input_sha256=self.context.input_sha256,
+            features=m.FeaturesRef(
+                path=rel(features_path),
+                sha256=d.sha256_file(features_path),
+                row_count=row_count,
+                predictor_count=schema.get("predictor_count"),
+                target_name=F.TARGET,
+            ),
+            split_manifest=m.SplitManifestRef(
+                path=rel(manifest_path),
+                sha256=d.sha256_file(manifest_path),
+                policy=manifest.get("policy"),
+                train_rows=manifest.get("train_rows"),
+                validation_rows=manifest.get("validation_rows"),
+                test_rows=manifest.get("test_rows"),
+            ),
+            feature_schema_path=rel(schema_path),
+            leakage_audit=m.LeakageAuditRef(
+                path=rel(audit_path), sha256=d.sha256_file(audit_path), passed=passed
+            ),
+            validation=m.ValidationResult(
+                passed=passed, evidence_ref="artifacts/scientist/leakage_audit.json#passed"
+            ),
+            issues=[],
+            handoff_ready=passed,
+            handoff_path=rel(self.context.run_dir / "feature_engineering_handoff.json"),
+            handoff_sha256="pending",
+            evidence_refs=[rel(features_path), rel(manifest_path), rel(audit_path)],
+        )
         stamped, sha = stamp_and_write(
             handoff,
             self.context.run_dir / "feature_engineering_handoff.json",
@@ -310,14 +371,67 @@ class ValidateTrainingOutputsTool(_ContextTool):
 
 class WriteTrainingHandoffTool(_ContextTool):
     name: str = "write_training_handoff"
-    description: str = "Validate and persist the structured TrainingRunHandoff record."
+    description: str = (
+        "Persist the training-comparison handoff. The tool builds the machine record "
+        "(candidate results, ranking, hashes, pass/fail) from the trusted on-disk "
+        "artifacts; you may supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("handoff_path", rel(self.context.run_dir / "training_handoff.json"))
-        record.setdefault("handoff_sha256", "pending")
-        handoff = m.TrainingRunHandoff.model_validate(record)
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        sci = self.context.scientist_dir
+        config_path = M.write_experiment_config(self.context.experiment_config_path)
+        cfg = M.experiment_config()
+        results_path = sci / "candidate_results.json"
+        results = json.loads(results_path.read_text(encoding="utf-8"))
+        check = M.validate_training_outputs(results)
+        passed = bool(check["passed"]) and check["test_accessed"] is False
+
+        manifest_path = self.context.run_dir / "candidate_artifact_manifest.json"
+        if not manifest_path.exists():
+            manifest_path = write_json(
+                manifest_path,
+                {
+                    "candidates": list(results.get("candidates", {}).keys()),
+                    "results_file": rel(results_path),
+                    "test_accessed": results.get("test_accessed", False),
+                },
+            )
+
+        handoff = m.TrainingRunHandoff(
+            status="PASS" if passed else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record, "Baseline + two models compared on validation; test untouched."
+            ),
+            experiment_config=m.ExperimentConfigRef(
+                path=rel(config_path),
+                sha256=d.sha256_file(config_path),
+                seed=cfg["seed"],
+                primary_metric=cfg["primary_metric"],
+            ),
+            candidate_results=m.CandidateResultsRef(
+                path=rel(results_path),
+                sha256=d.sha256_file(results_path),
+                candidate_count=results.get("candidate_count"),
+                all_required_candidates_present=bool(
+                    results.get("all_required_candidates_present")
+                ),
+            ),
+            candidate_artifact_manifest=m.CandidateArtifactManifestRef(
+                path=rel(manifest_path), sha256=d.sha256_file(manifest_path)
+            ),
+            validation_ranking=[m.RankingItem(**r) for r in results.get("validation_ranking", [])],
+            test_accessed=False,
+            validation=m.ValidationResult(
+                passed=passed, evidence_ref="tool:validate_training_outputs#passed"
+            ),
+            issues=[],
+            handoff_ready=passed,
+            handoff_path=rel(self.context.run_dir / "training_handoff.json"),
+            handoff_sha256="pending",
+            evidence_refs=[rel(results_path), rel(config_path)],
+        )
         stamped, sha = stamp_and_write(
             handoff,
             self.context.run_dir / "training_handoff.json",
@@ -519,14 +633,94 @@ class ValidateScientistArtifactsTool(_ContextTool):
 
 class WriteScientistHandoffTool(_ContextTool):
     name: str = "write_scientist_handoff"
-    description: str = "Validate and persist the final structured ScientistCrewHandoff record."
+    description: str = (
+        "Persist the final Scientist crew handoff. The tool builds the machine record "
+        "(required artifacts, selection, metrics, hashes, pass/fail) from the trusted "
+        "on-disk artifacts; you may supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("handoff_path", rel(self.context.run_dir / "scientist_crew_handoff.json"))
-        record.setdefault("handoff_sha256", "pending")
-        handoff = m.ScientistCrewHandoff.model_validate(record)
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        sci = self.context.scientist_dir
+        metrics_path = sci / "metrics.json"
+        metadata_path = sci / "model_metadata.json"
+        model_path = sci / "model.joblib"
+
+        report = artifact_validation.validate_scientist_artifacts(
+            features_path=sci / "features.csv",
+            model_path=model_path,
+            eval_report_path=sci / "evaluation_report.md",
+            model_card_path=sci / "model_card.md",
+            metrics_path=metrics_path,
+            metadata_path=metadata_path,
+        )
+        passed = report.ok
+        metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+        required_artifacts = [
+            m.ScientistArtifactRef(
+                name=name,
+                path=rel(sci / name),
+                sha256=d.sha256_file(sci / name),
+                size_bytes=(sci / name).stat().st_size,
+            )
+            for name in ("features.csv", "model.joblib", "evaluation_report.md", "model_card.md")
+        ]
+
+        handoff = m.ScientistCrewHandoff(
+            status="PASS" if passed else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record,
+                "Winner selected on validation macro F1 and evaluated once on the test month.",
+            ),
+            required_artifacts=required_artifacts,
+            selection=m.Selection(
+                primary_metric="macro_f1",
+                selected_candidate_id=metrics.get("selected_candidate_id"),
+                validation_metric_value=metrics.get("validation", {}).get("macro_f1"),
+                selection_evidence_ref="artifacts/scientist/metrics.json#validation.macro_f1",
+            ),
+            test_evaluation=m.TestEvaluation(
+                performed_once=True,
+                macro_f1=metrics.get("test", {}).get("macro_f1"),
+                evidence_ref="artifacts/scientist/metrics.json#test.macro_f1",
+            ),
+            model_metadata=m.ModelMetadataRef(
+                path=rel(metadata_path),
+                sha256=d.sha256_file(metadata_path),
+                round_trip_validated=bool(metadata.get("round_trip_validated")),
+            ),
+            metrics=m.MetricsRef(path=rel(metrics_path), sha256=d.sha256_file(metrics_path)),
+            validation=m.ValidationResult(
+                passed=passed, evidence_ref="tool:validate_scientist_artifacts#passed"
+            ),
+            limitations=[
+                m.Limitation(
+                    statement="Data is from 2008; not current-market evidence.",
+                    evidence_ref="artifacts/scientist/model_card.md#limitations",
+                ),
+                m.Limitation(
+                    statement=(
+                        "A strong same-category baseline is hard to beat; no significance claimed."
+                    ),
+                    evidence_ref="artifacts/scientist/metrics.json#validation_ranking",
+                ),
+                m.Limitation(
+                    statement=(
+                        "model.joblib is pickle-based; load only the trusted, "
+                        "hash-verified artifact."
+                    ),
+                    evidence_ref="artifacts/scientist/model_metadata.json#security_note",
+                ),
+            ],
+            issues=[],
+            handoff_ready=passed,
+            handoff_path=rel(self.context.run_dir / "scientist_crew_handoff.json"),
+            handoff_sha256="pending",
+            evidence_refs=[rel(sci / a.name) for a in required_artifacts],
+        )
         stamped, sha = stamp_and_write(
             handoff,
             self.context.run_dir / "scientist_crew_handoff.json",

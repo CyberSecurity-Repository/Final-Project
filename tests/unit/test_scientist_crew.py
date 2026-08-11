@@ -135,14 +135,30 @@ def test_tool_chain_runs_offline_without_network(ctx: ScientistRunContext, no_ne
         assert (ctx.scientist_dir / name).exists()
 
 
-def test_write_tools_reject_false_pass(ctx: ScientistRunContext) -> None:
-    from pydantic import ValidationError
-
+def test_write_tool_derives_status_from_evidence(ctx: ScientistRunContext) -> None:
     tools = _flat_tools(ctx)
-    with pytest.raises(ValidationError):
-        tools["write_training_handoff"]._run(
-            record={"status": "PASS", "summary": "x", "handoff_ready": False}
-        )
+    # Drive agent 1's real tool chain to lay down the on-disk evidence.
+    tools["run_feature_pipeline"]._run()
+    tools["run_leakage_audit"]._run()
+
+    # The write tool builds the handoff from that evidence and ignores any injected
+    # status/handoff_ready — a false PASS/BLOCKED cannot be forced, and a weak/empty
+    # LLM answer cannot crash it on machine-only fields.
+    out = tools["write_feature_engineering_handoff"]._run(
+        record={"status": "BLOCKED", "handoff_ready": False, "summary": "agent note"}
+    )
+    assert json.loads(out)["status"] == "PASS"  # evidence-derived, not the injected value
+    written = json.loads(
+        (ctx.run_dir / "feature_engineering_handoff.json").read_text(encoding="utf-8")
+    )
+    assert written["status"] == "PASS"
+    assert written["handoff_ready"] is True
+    assert written["summary"] == "agent note"  # only the interpretive summary is honored
+    assert written["features"]["sha256"]  # machine field filled from disk, not the LLM
+    assert written["leakage_audit"]["passed"] is True
+
+    # With no agent record at all, the tool still writes a valid, evidence-backed handoff.
+    assert json.loads(tools["write_feature_engineering_handoff"]._run())["status"] == "PASS"
 
 
 # --- mocked run path (no real OpenAI call) --------------------------------- #
