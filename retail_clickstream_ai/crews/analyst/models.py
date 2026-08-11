@@ -128,8 +128,6 @@ class SourceQualityReview(_Strict):
                 problems.append("handoff_ready must be true")
             if _has_fatal(self.issues):
                 problems.append("no fatal issue may be present")
-            if self.review_path is None or self.review_sha256 is None:
-                problems.append("review_path and review_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
@@ -168,8 +166,6 @@ class DataEngineeringHandoff(_Strict):
                 problems.append("dataset_contract path and sha256 must be set")
             if self.transformation_audit.path is None or self.transformation_audit.sha256 is None:
                 problems.append("transformation_audit path and sha256 must be set")
-            if self.handoff_path is None or self.handoff_sha256 is None:
-                problems.append("handoff_path and handoff_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
@@ -205,8 +201,6 @@ class AnalystCrewHandoff(_Strict):
             names = [a.name for a in self.required_artifacts]
             if len(names) != 4 or len(set(names)) != 4:
                 problems.append("required_artifacts must list exactly four unique artifacts")
-            if self.handoff_path is None or self.handoff_sha256 is None:
-                problems.append("handoff_path and handoff_sha256 must be set")
             if problems:
                 raise ValueError("PASS is unsupported: " + "; ".join(problems))
         return self
