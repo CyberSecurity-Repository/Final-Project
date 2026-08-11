@@ -3,10 +3,16 @@
 Wires the inline runtime prompts (``analyst/specs.py`` plus the shared rules in
 ``crews/prompts.py``) to three agents — Source & Quality Analyst, Data Engineer,
 and EDA & Business Analyst — each restricted to the tools its prompt allows, each
-returning a validated Pydantic structured output, running as a
+writing a validated Pydantic handoff to disk through its tools, running as a
 ``Process.sequential`` crew with explicit task context references. The heavy
 lifting is done by the deterministic tools; the agents interpret and assemble the
 handoffs.
+
+Tasks intentionally do **not** set ``output_pydantic``: the ``write_*`` tools already
+persist a fully validated handoff (via ``stamp_and_write``), so coercing each agent's
+free-text final answer back into the strict model is redundant and makes weak models
+crash on machine-only fields (content hashes, sizes) they cannot author. The
+deterministic validators/gates remain the sole authority on pass/fail.
 
 Building a crew needs no API key (so tests can inspect it offline); credentials
 are required only by :func:`run_analyst_crew`, which starts a real LLM run.
@@ -21,7 +27,6 @@ from crewai import Agent, Crew, Process, Task
 from crewai.tools import BaseTool
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
-from retail_clickstream_ai.crews.analyst import models as m
 from retail_clickstream_ai.crews.analyst.specs import ANALYST_SPECS
 from retail_clickstream_ai.crews.analyst.tools import build_analyst_tools
 from retail_clickstream_ai.crews.context import AnalystRunContext
@@ -29,11 +34,6 @@ from retail_clickstream_ai.crews.context import AnalystRunContext
 # Fixed per-role settings taken from the runtime prompt specs.
 _ROLE_ORDER = ("source_quality", "data_engineer", "eda_business")
 _MAX_ITER = {"source_quality": 6, "data_engineer": 6, "eda_business": 8}
-_OUTPUT_MODEL: dict[str, type] = {
-    "source_quality": m.SourceQualityReview,
-    "data_engineer": m.DataEngineeringHandoff,
-    "eda_business": m.AnalystCrewHandoff,
-}
 
 
 @dataclass
@@ -89,7 +89,6 @@ def build_analyst_crew(
             expected_output=prompt_loader.fill_placeholders(spec.expected_output, mapping),
             agent=agent,
             tools=role_tools[role_key],
-            output_pydantic=_OUTPUT_MODEL[role_key],
             context=list(ordered_tasks),  # explicit upstream context references
             name=f"analyst_{role_key}",
         )

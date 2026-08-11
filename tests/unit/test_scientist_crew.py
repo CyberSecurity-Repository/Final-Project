@@ -14,17 +14,11 @@ import pytest
 
 from retail_clickstream_ai.crews import prompts as prompt_loader
 from retail_clickstream_ai.crews.context import ScientistRunContext
-from retail_clickstream_ai.crews.scientist import models as m
 from retail_clickstream_ai.crews.scientist.crew import build_scientist_crew, run_scientist_crew
 from retail_clickstream_ai.crews.scientist.specs import SCIENTIST_SPECS
 from retail_clickstream_ai.crews.scientist.tools import build_scientist_tools
 
 _ROLES = ("contract_feature_engineer", "model_trainer", "evaluation_governance")
-_EXPECTED_MODEL = {
-    "contract_feature_engineer": m.FeatureEngineeringHandoff,
-    "model_trainer": m.TrainingRunHandoff,
-    "evaluation_governance": m.ScientistCrewHandoff,
-}
 
 
 @pytest.fixture
@@ -67,7 +61,10 @@ def test_tasks_are_ordered_with_growing_context(ctx: ScientistRunContext) -> Non
     ctx_lengths = [len(bundle.tasks[r].context) for r in _ROLES]
     assert ctx_lengths == [0, 1, 2]
     for role_key in _ROLES:
-        assert bundle.tasks[role_key].output_pydantic is _EXPECTED_MODEL[role_key]
+        # Tasks intentionally set no output_pydantic (weak models can't author the
+        # machine-stamped handoff fields); the write_* tools persist the validated
+        # handoff to disk and the deterministic gates are the authority.
+        assert bundle.tasks[role_key].output_pydantic is None
 
 
 def test_each_task_loads_shared_rules_and_its_role_prompt(ctx: ScientistRunContext) -> None:
