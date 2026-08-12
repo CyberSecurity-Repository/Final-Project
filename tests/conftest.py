@@ -131,3 +131,17 @@ def scientist_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Any) -> Any:
         require_all_months=True,
     )
     return tmp_path
+
+
+@pytest.fixture
+def full_artifact_env(scientist_env: Any) -> Any:
+    """Extend `scientist_env` with a full deterministic Scientist run.
+
+    Produces a complete, valid set of Analyst + Scientist artifacts under a
+    temp ``ARTIFACT_ROOT``, so dashboard tests can render every section from
+    committed-shaped fixtures without touching the real repo artifacts.
+    """
+    from retail_clickstream_ai.pipeline.scientist_pipeline import run_scientist_pipeline
+
+    run_scientist_pipeline(pin_analyst_hash=False)
+    return scientist_env

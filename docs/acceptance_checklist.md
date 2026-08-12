@@ -15,7 +15,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 | 1 | CrewAI | Two crews orchestrated by one CrewAI Flow | 3–5 | ✅ two crews (6 agents) orchestrated by one CrewAI Flow (`flow.py`) |
 | 2 | Python | `retail_clickstream_ai/` package, Python 3.11+ | 1 | ✅ |
 | 3 | Git + GitHub with Pull Requests | 3 feature branches + 3 documented PRs | 1–8 | 🟡 |
-| 4 | Streamlit (or Flask) | `app.py` Streamlit dashboard | 6 | ⬜ |
+| 4 | Streamlit (or Flask) | `app.py` Streamlit dashboard | 6 | ✅ four-section dashboard (Overview/EDA/Model evaluation/Predict); `retail_clickstream_ai/dashboard/` service+cache+UI package |
 | 5 | Pandas, scikit-learn, Matplotlib/Seaborn | Declared deps; used in pipelines | 1–4 | ✅ pandas + Matplotlib/Seaborn (Stage 3); scikit-learn (Stage 4) |
 
 ## Eight required artifacts
@@ -60,7 +60,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 | 2 | Session-aware next-click target | Target shift within verified session; last click dropped | 4 | ✅ `test_target_is_next_click_within_session`, `test_final_click_of_each_session_is_dropped` |
 | 3 | Past-only features | Leakage audit + unit tests | 4 | ✅ `run_leakage_audit` + mutation probe; `test_past_aggregates_cannot_see_future` |
 | 4 | Winner chosen on validation; test used once | Selection on macro F1; single test evaluation | 4 | ✅ `lock_winner_and_evaluate_test`; `test_winner_is_top_validation_macro_f1` |
-| 5 | Trusted model loading | Hash-verified repo artifact only (joblib is pickle-based) | 4/6 | ✅ round-trip + hash in `validate_scientist_artifacts`; UI-load Stage 6 |
+| 5 | Trusted model loading | Hash-verified repo artifact only (joblib is pickle-based) | 4/6 | ✅ round-trip + hash in `validate_scientist_artifacts`; UI-load hash pre-check in `dashboard/data.py::load_verified_model` (Stage 6) |
 
 ## Final deliverables
 
@@ -75,7 +75,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | 🟡 134 tests pass (126 unit + 8 Flow integration, mocked crew boundary); CI wiring Stage 7 |
+| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | 🟡 182 tests pass (126 unit + 8 Flow integration + 14 crew-robustness + 34 Stage-6 dashboard/UI, mocked crew/Flow boundaries); CI wiring Stage 7 |
 | 2 | Lint / format / type check | `ruff`, `mypy` configured in `pyproject.toml` | 1 | ✅ |
 | 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ⬜ |
 | 4 | No secrets / raw dataset tracked | `.gitignore`; diff scan | 1–7 | ✅ |
