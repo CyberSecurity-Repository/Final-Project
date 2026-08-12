@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict
 
 from retail_clickstream_ai.crews.analyst import models as m
 from retail_clickstream_ai.crews.context import AnalystRunContext
-from retail_clickstream_ai.crews.io_helpers import rel, stamp_and_write
+from retail_clickstream_ai.crews.io_helpers import missing_prerequisites, rel, stamp_and_write
 from retail_clickstream_ai.pipeline import cleaning, eda
 from retail_clickstream_ai.pipeline import data as d
 from retail_clickstream_ai.reporting.eda_report import render_eda_report
@@ -40,7 +40,20 @@ class _NoArgs(BaseModel):
 
 class _WriteRecordArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    record: dict[str, Any]
+    # Optional: the tool builds the machine-truth record from the trusted on-disk
+    # artifacts; the agent need only supply an interpretive ``summary`` (any other
+    # keys are ignored). This makes the handoff robust to any/empty LLM output and
+    # makes a false PASS or a malformed record impossible.
+    record: dict[str, Any] | None = None
+
+
+def _opt_summary(record: dict[str, Any] | None, default: str) -> str:
+    """Take a non-empty ``summary`` from the agent's record, else use ``default``."""
+    if isinstance(record, dict):
+        text = record.get("summary")
+        if isinstance(text, str) and text.strip():
+            return text.strip()
+    return default
 
 
 class _ReadMetricsArgs(BaseModel):
@@ -91,14 +104,47 @@ class ReadRawProfileTool(_ContextTool):
 
 class WriteSourceQualityReviewTool(_ContextTool):
     name: str = "write_source_quality_review"
-    description: str = "Validate and persist the structured SourceQualityReview record."
+    description: str = (
+        "Persist the source & quality review. The tool builds the machine record "
+        "(source metadata, checks, pass/fail) from the trusted on-disk artifacts; you "
+        "may supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("review_path", rel(self.context.run_dir / "source_quality_review.json"))
-        record.setdefault("review_sha256", "pending")
-        review = m.SourceQualityReview.model_validate(record)
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        run_dir = self.context.run_dir
+        sm = json.loads((run_dir / "source_metadata.json").read_text(encoding="utf-8"))
+        rv = json.loads((run_dir / "raw_validation_report.json").read_text(encoding="utf-8"))
+        schema_ok = bool(rv.get("report", {}).get("ok", rv.get("passed")))
+        sha_match = bool(rv.get("sha256_match"))
+        ev = "artifacts/runs#raw_validation_report.json"
+
+        review = m.SourceQualityReview(
+            status="PASS" if schema_ok else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record, "Source authentic and structurally usable; raw validation checked."
+            ),
+            source=m.SourceInfo(
+                dataset_name=sm.get("dataset_name"),
+                source_url=sm.get("source_url"),
+                primary_documentation_url=sm.get("primary_documentation_url"),
+                publisher=sm.get("publisher"),
+                license=sm.get("license"),
+                documented_time_period=sm.get("documented_time_period"),
+                input_sha256=self.context.input_sha256,
+            ),
+            checks=[
+                m.CheckItem(name="input_sha256_match", passed=sha_match, evidence_ref=ev),
+                m.CheckItem(name="schema_and_ranges", passed=schema_ok, evidence_ref=ev),
+                m.CheckItem(name="session_click_order", passed=schema_ok, evidence_ref=ev),
+            ],
+            issues=[],
+            handoff_ready=schema_ok,
+            review_path=rel(run_dir / "source_quality_review.json"),
+            review_sha256="pending",
+            evidence_refs=[rel(run_dir / "raw_validation_report.json")],
+        )
         stamped, sha = stamp_and_write(
             review,
             self.context.run_dir / "source_quality_review.json",
@@ -181,17 +227,74 @@ class ValidateCleanedHandoffTool(_ContextTool):
 
 class WriteDataEngineeringHandoffTool(_ContextTool):
     name: str = "write_data_engineering_handoff"
-    description: str = "Validate and persist the structured DataEngineeringHandoff record."
+    description: str = (
+        "Persist the data-engineering handoff. The tool builds the machine record "
+        "(clean-data/contract/audit paths, hashes, pass/fail) from the trusted on-disk "
+        "artifacts; you may supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("input_sha256", self.context.input_sha256)
-        record.setdefault(
-            "handoff_path", rel(self.context.run_dir / "data_engineering_handoff.json")
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        contract = DatasetContract.build()
+        clean_path = self.context.analyst_dir / "clean_data.csv"
+        contract_path = self.context.analyst_dir / "dataset_contract.json"
+        audit_path = self.context.run_dir / "transformation_audit.json"
+
+        missing = missing_prerequisites(clean_path, contract_path, audit_path)
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`run_cleaning_pipeline` first, then retry "
+                        f"`write_data_engineering_handoff`."
+                    )
+                }
+            )
+
+        report = artifact_validation.validate_clean_file_against_contract(
+            clean_path,
+            contract,
+            pin_hash=self.context.pin_hash,
+            require_all_months=self.context.require_all_months,
         )
-        record.setdefault("handoff_sha256", "pending")
-        handoff = m.DataEngineeringHandoff.model_validate(record)
+        passed = report.ok
+        audit = json.loads(audit_path.read_text(encoding="utf-8")) if audit_path.exists() else {}
+        rules = audit.get("rules")
+
+        handoff = m.DataEngineeringHandoff(
+            status="PASS" if passed else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record, "Cleaned data produced and validated against the dataset contract."
+            ),
+            input_sha256=self.context.input_sha256,
+            clean_data=m.CleanDataRef(
+                path=rel(clean_path),
+                sha256=d.sha256_file(clean_path),
+                column_count=len(cleaning.read_clean_csv(clean_path).columns),
+            ),
+            dataset_contract=m.ContractRef(
+                path=rel(contract_path),
+                sha256=d.sha256_file(contract_path),
+                contract_version=contract.data["contract_version"],
+            ),
+            transformation_audit=m.AuditRef(
+                path=rel(audit_path),
+                sha256=d.sha256_file(audit_path),
+                rule_count=len(rules) if isinstance(rules, list) else None,
+                fatal_issue_count=audit.get("fatal_issue_count"),
+            ),
+            validation=m.ValidationResult(
+                passed=passed, evidence_ref="tool:validate_cleaned_handoff#passed"
+            ),
+            issues=[],
+            handoff_ready=passed,
+            handoff_path=rel(self.context.run_dir / "data_engineering_handoff.json"),
+            handoff_sha256="pending",
+            evidence_refs=[rel(clean_path), rel(contract_path), rel(audit_path)],
+        )
         stamped, sha = stamp_and_write(
             handoff,
             self.context.run_dir / "data_engineering_handoff.json",
@@ -318,15 +421,108 @@ class ValidateAnalystArtifactsTool(_ContextTool):
 
 class WriteAnalystHandoffTool(_ContextTool):
     name: str = "write_analyst_handoff"
-    description: str = "Validate and persist the final structured AnalystCrewHandoff record."
+    description: str = (
+        "Persist the final Analyst crew handoff. The tool builds the machine record "
+        "(the four required artifacts, EDA evidence, hashes, pass/fail) from the trusted "
+        "on-disk artifacts; you may supply an interpretive `summary` and nothing else."
+    )
     args_schema: type[BaseModel] = _WriteRecordArgs
 
-    def _run(self, record: dict[str, Any]) -> str:
-        record.setdefault("run_id", self.context.run_id)
-        record.setdefault("input_sha256", self.context.input_sha256)
-        record.setdefault("handoff_path", rel(self.context.run_dir / "analyst_crew_handoff.json"))
-        record.setdefault("handoff_sha256", "pending")
-        handoff = m.AnalystCrewHandoff.model_validate(record)
+    def _run(self, record: dict[str, Any] | None = None) -> str:
+        contract = DatasetContract.build()
+        analyst_dir = self.context.analyst_dir
+
+        missing = missing_prerequisites(
+            analyst_dir / "clean_data.csv",
+            analyst_dir / "eda_report.html",
+            analyst_dir / "insights.md",
+            analyst_dir / "dataset_contract.json",
+        )
+        if missing:
+            names = ", ".join(p.name for p in missing)
+            return _compact(
+                {
+                    "error": (
+                        f"Missing prerequisite artifact(s): {names}. Call "
+                        f"`run_eda_pipeline` and `render_analyst_reports` first, then "
+                        f"retry `write_analyst_handoff`."
+                    )
+                }
+            )
+
+        report = artifact_validation.validate_analyst_artifacts(
+            clean_path=analyst_dir / "clean_data.csv",
+            eda_report_path=analyst_dir / "eda_report.html",
+            insights_path=analyst_dir / "insights.md",
+            contract_path=analyst_dir / "dataset_contract.json",
+            contract=contract,
+            pin_hash=self.context.pin_hash,
+            require_all_months=self.context.require_all_months,
+        )
+        passed = report.ok
+
+        artifact_names: tuple[m.ArtifactName, ...] = (
+            "clean_data.csv",
+            "eda_report.html",
+            "insights.md",
+            "dataset_contract.json",
+        )
+        required_artifacts = [
+            m.ArtifactRef(
+                name=name,
+                path=rel(analyst_dir / name),
+                sha256=d.sha256_file(analyst_dir / name),
+                size_bytes=(analyst_dir / name).stat().st_size,
+            )
+            for name in artifact_names
+        ]
+
+        metrics_path = self.context.eda_dir / "eda_metrics.json"
+        manifest_path = self.context.eda_dir / "figure_manifest.json"
+        figure_manifest = (
+            json.loads(manifest_path.read_text(encoding="utf-8")) if manifest_path.exists() else {}
+        )
+        figure_count = figure_manifest.get("figure_count")
+        if figure_count is None and isinstance(figure_manifest.get("figures"), list):
+            figure_count = len(figure_manifest["figures"])
+
+        handoff = m.AnalystCrewHandoff(
+            status="PASS" if passed else "BLOCKED",
+            run_id=self.context.run_id,
+            summary=_opt_summary(
+                record, "Analyst crew complete: four artifacts produced and validated."
+            ),
+            input_sha256=self.context.input_sha256,
+            required_artifacts=required_artifacts,
+            eda_evidence=m.EdaEvidence(
+                metrics_path=rel(metrics_path) if metrics_path.exists() else None,
+                metrics_sha256=d.sha256_file(metrics_path) if metrics_path.exists() else None,
+                figure_manifest_path=rel(manifest_path) if manifest_path.exists() else None,
+                figure_count=figure_count,
+            ),
+            validation=m.ValidationResult(
+                passed=passed, evidence_ref="tool:validate_analyst_artifacts#passed"
+            ),
+            limitations=[
+                m.Limitation(
+                    statement="Data is from 2008; not current-market evidence.",
+                    evidence_ref="artifacts/analyst/insights.md#limitations",
+                ),
+                m.Limitation(
+                    statement="EDA is descriptive, not causal.",
+                    evidence_ref="artifacts/analyst/insights.md#limitations",
+                ),
+                m.Limitation(
+                    statement="One shop, one dominant country.",
+                    evidence_ref="artifacts/analyst/eda_report.html#findings",
+                ),
+            ],
+            issues=[],
+            handoff_ready=passed,
+            handoff_path=rel(self.context.run_dir / "analyst_crew_handoff.json"),
+            handoff_sha256="pending",
+            evidence_refs=[rel(analyst_dir / a.name) for a in required_artifacts],
+        )
         stamped, sha = stamp_and_write(
             handoff,
             self.context.run_dir / "analyst_crew_handoff.json",

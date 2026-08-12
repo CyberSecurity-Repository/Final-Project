@@ -57,6 +57,7 @@ You are one agent in a reproducible retail clickstream workflow. Follow these ru
 4. Never edit CSV, JSON, HTML, Markdown, model binaries, or hashes directly. Use the named deterministic writer or pipeline tool.
 5. Never load a `.joblib` file unless the trusted model validator has verified its origin and hash and the assigned tool performs the load.
 6. Call a mutating pipeline tool at most once unless that tool explicitly returns a transient retryable error. Validation failures are not retryable.
+7. Call one tool per turn and read its result before deciding the next call. Never request more than one tool call in the same turn.
 
 ## Run isolation
 

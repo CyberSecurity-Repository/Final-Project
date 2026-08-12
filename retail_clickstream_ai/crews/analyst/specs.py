@@ -62,7 +62,18 @@ The dataset is expected to be the Clickstream Data for Online Shopping resource 
 - Do not repair, rename, coerce, filter, sort, or rewrite data.
 - Do not infer a license, delimiter, field name, session key, time range, or allowed value.
 - Do not claim that publisher-reported “no missing values” is observed unless the raw validator confirms it.
-- If session identity or click order cannot be verified, return `FAIL`; next-click modeling is unsafe.""",
+- If session identity or click order cannot be verified, return `FAIL`; next-click modeling is unsafe.
+
+### Completion checklist
+
+This task is not finished until all four of these tools have been called, in this run:
+
+1. `read_source_metadata`
+2. `read_raw_validation_report`
+3. `read_raw_profile`
+4. `write_source_quality_review` — call this last, only after the first three.
+
+A Final Answer submitted before `write_source_quality_review` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `SourceQualityReview`:
 
@@ -160,7 +171,17 @@ Create the cleaned-data handoff for run `{run_id}`.
 - Do not perform EDA, derive next-click labels, build features, split data, or train models.
 - Do not change cleaning policy to make a validation pass.
 - Do not describe a transformation count that is absent from the audit.
-- Do not accept a contract that disagrees with the cleaned CSV's observed schema or hash.""",
+- Do not accept a contract that disagrees with the cleaned CSV's observed schema or hash.
+
+### Completion checklist
+
+This task is not finished until all three of these tools have been called, in this order, in this run:
+
+1. `run_cleaning_pipeline`
+2. `validate_cleaned_handoff`
+3. `write_data_engineering_handoff`
+
+A Final Answer submitted before `write_data_engineering_handoff` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `DataEngineeringHandoff`:
 
@@ -262,7 +283,18 @@ Complete the Analyst crew output for run `{run_id}`.
 - Do not calculate metrics mentally or from raw row samples.
 - Do not claim causation, current-market relevance, customer identity, conversion, revenue, or purchase behavior unless those concepts exist and are validated in the dataset.
 - Do not omit inconvenient categories, quality warnings, or time limitations.
-- Do not create Scientist artifacts or recommend a winning predictive model.""",
+- Do not create Scientist artifacts or recommend a winning predictive model.
+
+### Completion checklist
+
+This task is not finished until all four of these tools have been called, in this order, in this run:
+
+1. `run_eda_pipeline`
+2. `render_analyst_reports`
+3. `validate_analyst_artifacts`
+4. `write_analyst_handoff`
+
+Call `read_eda_metrics` as many times as you need for specific metric values while drafting your summary; it is not part of the required order above. A Final Answer submitted before `write_analyst_handoff` has returned is incomplete, not merely unsummarized — do not submit one.""",
     expected_output="""\
 Return one JSON object matching `AnalystCrewHandoff`:
 
