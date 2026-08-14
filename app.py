@@ -1,12 +1,16 @@
-"""Streamlit entry point (full four-section dashboard implemented in Stage 6).
+"""Streamlit entry point.
 
-Run with:
+Run with::
 
     streamlit run app.py
 
-Until Stage 6 this shows a placeholder only. It performs no network access and
-makes no LLM calls on load. Business/pipeline logic will live in tested service
-modules imported here — never inline in this file.
+Page load never runs the CrewAI Flow and never calls OpenAI — it only reads
+committed artifacts (via :mod:`retail_clickstream_ai.dashboard.cache`) and
+loads the hash-verified model. A real pipeline run starts only from the
+explicit, confirmation-gated control inside the Overview section.
+
+All business/pipeline logic lives in :mod:`retail_clickstream_ai.dashboard` —
+this file only wires page config, navigation, and section dispatch.
 """
 
 from __future__ import annotations
@@ -15,14 +19,36 @@ from __future__ import annotations
 def main() -> None:
     import streamlit as st
 
-    st.set_page_config(page_title="Retail Clickstream AI", page_icon="🛍️")
-    st.title("Retail Clickstream AI")
-    st.caption("Next-product-category prediction · workflow demonstration on 2008 data")
-    st.info(
-        "The interactive dashboard (Overview · EDA · Model evaluation · Predict "
-        "next category) is implemented in Stage 6. This placeholder confirms the "
-        "app entry point is wired up."
+    from retail_clickstream_ai.dashboard import sections
+
+    st.set_page_config(
+        page_title="Retail Clickstream AI",
+        page_icon="🛍️",
+        layout="wide",
+        initial_sidebar_state="expanded",
     )
+
+    st.sidebar.title("🛍️ Retail Clickstream AI")
+    st.sidebar.caption("Next-product-category prediction · workflow demonstration on 2008 data")
+    page = st.sidebar.radio(
+        "Section",
+        options=("Overview", "EDA", "Model evaluation", "Predict next category"),
+        key="nav_section",
+    )
+    st.sidebar.divider()
+    st.sidebar.caption(
+        "Source: [UCI dataset 553](https://archive.ics.uci.edu/dataset/553/"
+        "clickstream+data+for+online+shopping) · CC BY 4.0"
+    )
+
+    renderers = {
+        "Overview": (sections.render_overview, "Overview"),
+        "EDA": (sections.render_eda, "EDA"),
+        "Model evaluation": (sections.render_evaluation, "Model evaluation"),
+        "Predict next category": (sections.render_predict, "Predict next category"),
+    }
+    render, name = renderers[page]
+    sections.safe_section(name, render)
 
 
 if __name__ == "__main__":
