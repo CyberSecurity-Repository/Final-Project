@@ -36,6 +36,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import seaborn as sns  # noqa: E402
 
+from retail_clickstream_ai.paths import ANALYST_EDA_METRICS_REF  # noqa: E402
 from retail_clickstream_ai.pipeline import data as d  # noqa: E402
 from retail_clickstream_ai.reference import codebook  # noqa: E402
 
@@ -395,7 +396,7 @@ def _encode(fig: plt.Figure) -> str:
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
 
-_METRICS_REF = "artifacts/analyst/eda/eda_metrics.json"
+_METRICS_REF = ANALYST_EDA_METRICS_REF
 
 
 def make_figures(clean_df: pd.DataFrame, metrics: dict[str, Any]) -> list[Figure]:

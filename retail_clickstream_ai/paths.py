@@ -22,7 +22,16 @@ DATA_RAW: Path = DATA_DIR / "raw"
 
 DOCS_DIR: Path = PROJECT_ROOT / "docs"
 
-_DEFAULT_ARTIFACT_ROOT = "artifacts"
+DEFAULT_ARTIFACT_ROOT = "artifacts"
+
+# Canonical evidence-reference strings embedded verbatim in generated reports so
+# every reported number cites its machine-readable source file. They name the
+# committed artifact layout and are display-only: unlike ``artifact_root()`` they
+# intentionally do not follow the ``ARTIFACT_ROOT`` override (which only changes
+# where a run writes), because a published report should cite the canonical path.
+ANALYST_EDA_METRICS_REF = "artifacts/analyst/eda/eda_metrics.json"
+SCIENTIST_METRICS_REF = "artifacts/scientist/metrics.json"
+SCIENTIST_METADATA_REF = "artifacts/scientist/model_metadata.json"
 
 
 def artifact_root() -> Path:
@@ -31,8 +40,8 @@ def artifact_root() -> Path:
     A relative override is resolved against the project root; an absolute
     override is used as-is.
     """
-    raw = (os.environ.get("ARTIFACT_ROOT") or _DEFAULT_ARTIFACT_ROOT).strip()
-    raw = raw or _DEFAULT_ARTIFACT_ROOT
+    raw = (os.environ.get("ARTIFACT_ROOT") or DEFAULT_ARTIFACT_ROOT).strip()
+    raw = raw or DEFAULT_ARTIFACT_ROOT
     root = Path(raw)
     return root if root.is_absolute() else PROJECT_ROOT / root
 

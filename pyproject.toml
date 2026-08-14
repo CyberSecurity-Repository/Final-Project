@@ -93,6 +93,12 @@ markers = [
 ]
 
 [tool.mypy]
+# Target 3.13 deliberately — not the 3.11 `requires-python` floor. mypy parses
+# installed third-party stubs (notably numpy) using this grammar, and current
+# numpy stubs use PEP 695 `type` statements that only parse under 3.12+. Our code
+# is guaranteed 3.11-compatible by ruff's `target-version = "py311"` and by CI
+# running the full suite on Python 3.11 (mypy can target 3.13 while itself running
+# under 3.11). Lowering this value breaks stub parsing, not our type coverage.
 python_version = "3.13"
 files = ["retail_clickstream_ai"]
 warn_unused_configs = true
@@ -108,3 +114,6 @@ source = ["retail_clickstream_ai"]
 
 [tool.coverage.report]
 show_missing = true
+# A conservative floor (measured total ~88%) that guards the tested business-critical
+# core against regressions without inviting vanity tests. Applied by `pytest --cov`.
+fail_under = 85

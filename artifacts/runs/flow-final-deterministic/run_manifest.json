@@ -1,0 +1,130 @@
+{
+  "analyst": {
+    "artifacts": {
+      "clean_data.csv": {
+        "path": "artifacts/analyst/clean_data.csv",
+        "sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd",
+        "size_bytes": 9411530
+      },
+      "dataset_contract.json": {
+        "path": "artifacts/analyst/dataset_contract.json",
+        "sha256": "1bf3f25f9ed55f6d27a961691cd097fb4c22fb2517fe6e9f5effd92aa61222d8",
+        "size_bytes": 10673
+      },
+      "eda_report.html": {
+        "path": "artifacts/analyst/eda_report.html",
+        "sha256": "1ae86860edffdab2d46707c94e6b23d7f956dcb15009c14dcb3f5bc6d724ab0b",
+        "size_bytes": 211457
+      },
+      "insights.md": {
+        "path": "artifacts/analyst/insights.md",
+        "sha256": "78ef8123669e8a9cdbd0b8e128bbeac69d393ae8292a9fee80af6d639a258cfe",
+        "size_bytes": 5874
+      }
+    },
+    "run_dir": "artifacts/runs/analyst-fcc167bbd0ba",
+    "run_id": "analyst-fcc167bbd0ba"
+  },
+  "app_name": "retail-clickstream-ai",
+  "ended_at": "2026-08-14T06:14:55.657664+00:00",
+  "engine": "deterministic",
+  "gates": {
+    "analyst_gate": "passed",
+    "model_gate": "passed"
+  },
+  "input": {
+    "path": "data/raw/e-shop clothing 2008.csv",
+    "sha256": "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d"
+  },
+  "package_version": "0.1.0",
+  "run_id": "flow-final-deterministic",
+  "scientist": {
+    "artifacts": {
+      "evaluation_report.md": {
+        "path": "artifacts/scientist/evaluation_report.md",
+        "sha256": "b0481ea540f2d33e10e3ff21e80aaae4351546276128c4522f58174d4a84b7d5",
+        "size_bytes": 3991
+      },
+      "features.csv": {
+        "path": "artifacts/scientist/features.csv",
+        "sha256": "037e7cd7b379c0c212c2e149f4bfd1d3d4a1d8583abd90e2b25e481535f79bb8",
+        "size_bytes": 9992393
+      },
+      "metrics.json": {
+        "path": "artifacts/scientist/metrics.json",
+        "sha256": "6b9a2f350f9815179cac45d1c8c5dea04bda08830e2acdb450cee4fb72a1e434",
+        "size_bytes": 4245
+      },
+      "model.joblib": {
+        "path": "artifacts/scientist/model.joblib",
+        "sha256": "b3a442546a75debcf6dadd33bb957a209185ea0a2a8a7d7934b3e8894701e080",
+        "size_bytes": 893
+      },
+      "model_card.md": {
+        "path": "artifacts/scientist/model_card.md",
+        "sha256": "7755746542d2ceb1b1bc8bb2501e29a9ad6d3c1819a4e53c7decc579c8e8067b",
+        "size_bytes": 2919
+      },
+      "model_metadata.json": {
+        "path": "artifacts/scientist/model_metadata.json",
+        "sha256": "54740eb7cc189f9c32693ac926d93d6ac3d24a8511fffe6798f0b02c9279e4ed",
+        "size_bytes": 2580
+      }
+    },
+    "run_dir": "artifacts/runs/scientist-2d256c2ecb34",
+    "run_id": "scientist-2d256c2ecb34"
+  },
+  "selection": {
+    "primary_metric": "macro_f1",
+    "primary_metric_value": 0.819539,
+    "selected_candidate_id": "baseline_transition",
+    "selected_model": "current_category_transition_baseline"
+  },
+  "stages": [
+    {
+      "duration_seconds": 0.371117,
+      "ended_at": "2026-08-14T06:11:03.315898+00:00",
+      "stage": "prepare",
+      "started_at": "2026-08-14T06:11:02.944776+00:00",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 2.664759,
+      "ended_at": "2026-08-14T06:11:05.982957+00:00",
+      "stage": "analyst_crew",
+      "started_at": "2026-08-14T06:11:03.318179+00:00",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 0.395743,
+      "ended_at": "2026-08-14T06:11:06.379549+00:00",
+      "stage": "analyst_gate",
+      "started_at": "2026-08-14T06:11:05.983799+00:00",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 229.139981,
+      "ended_at": "2026-08-14T06:14:55.521530+00:00",
+      "stage": "scientist_crew",
+      "started_at": "2026-08-14T06:11:06.380833+00:00",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 0.133481,
+      "ended_at": "2026-08-14T06:14:55.656066+00:00",
+      "stage": "model_gate",
+      "started_at": "2026-08-14T06:14:55.522581+00:00",
+      "status": "passed"
+    },
+    {
+      "duration_seconds": 1.3e-05,
+      "ended_at": "2026-08-14T06:14:55.657675+00:00",
+      "stage": "manifest",
+      "started_at": "2026-08-14T06:14:55.657649+00:00",
+      "status": "passed"
+    }
+  ],
+  "started_at": "2026-08-14T06:11:02.944801+00:00",
+  "status": "success",
+  "total_duration_seconds": 232.705094
+}

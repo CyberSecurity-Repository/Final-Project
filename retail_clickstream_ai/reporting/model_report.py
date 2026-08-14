@@ -16,10 +16,11 @@ from __future__ import annotations
 
 from typing import Any
 
+from retail_clickstream_ai.paths import SCIENTIST_METADATA_REF, SCIENTIST_METRICS_REF
 from retail_clickstream_ai.reporting.evidence import Evidence
 
-METRICS_REF = "artifacts/scientist/metrics.json"
-METADATA_REF = "artifacts/scientist/model_metadata.json"
+METRICS_REF = SCIENTIST_METRICS_REF
+METADATA_REF = SCIENTIST_METADATA_REF
 
 # Section markers the Scientist artifact validator asserts are present.
 REQUIRED_EVAL_REPORT_MARKERS: tuple[str, ...] = (

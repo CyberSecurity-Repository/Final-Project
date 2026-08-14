@@ -16,6 +16,8 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
+from retail_clickstream_ai.paths import DEFAULT_ARTIFACT_ROOT
+
 # Seed os.environ from a local .env if one exists. This is a no-op when the file
 # is absent and never overrides values already set in the real environment.
 load_dotenv(override=False)
@@ -59,7 +61,7 @@ def load_settings() -> Settings:
         openai_api_key=_clean(os.environ.get("OPENAI_API_KEY")),
         openai_model_name=_clean(os.environ.get("OPENAI_MODEL_NAME")),
         log_level=(_clean(os.environ.get("LOG_LEVEL")) or "INFO").upper(),
-        artifact_root=_clean(os.environ.get("ARTIFACT_ROOT")) or "artifacts",
+        artifact_root=_clean(os.environ.get("ARTIFACT_ROOT")) or DEFAULT_ARTIFACT_ROOT,
     )
 
 

@@ -7,7 +7,7 @@
     "all_required_candidates_present": true,
     "candidate_count": 3,
     "path": "artifacts/scientist/candidate_results.json",
-    "sha256": "c1c6b0c7ae13f94fe8d432e13dd4f6fab40e135a8a10e52cc61e705a9b7de5f6"
+    "sha256": "c3e648ccf91f05e59d6ab1736503aa22b8e9d3c7a723b00b3ee21bb47f176ad3"
   },
   "evidence_refs": [
     "artifacts/scientist/candidate_results.json",
@@ -21,7 +21,7 @@
   },
   "handoff_path": "artifacts/runs/scientist-2d256c2ecb34/training_handoff.json",
   "handoff_ready": true,
-  "handoff_sha256": "2593589f7d4b39940646abd067bdbdb3253f2c58632859a341067e8c2e208b5b",
+  "handoff_sha256": "2f09975bca04942cfe301ea036952e58c429ef8217d6117b0bab6d35b7cc81c1",
   "issues": [],
   "run_id": "scientist-2d256c2ecb34",
   "status": "PASS",

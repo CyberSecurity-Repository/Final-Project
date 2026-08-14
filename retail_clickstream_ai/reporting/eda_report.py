@@ -14,10 +14,11 @@ from __future__ import annotations
 import html
 from typing import Any
 
+from retail_clickstream_ai.paths import ANALYST_EDA_METRICS_REF
 from retail_clickstream_ai.reporting.evidence import Evidence
 from retail_clickstream_ai.validation.contract import DatasetContract
 
-METRICS_REF = "artifacts/analyst/eda/eda_metrics.json"
+METRICS_REF = ANALYST_EDA_METRICS_REF
 
 _CSS = """
 :root { color-scheme: light; }

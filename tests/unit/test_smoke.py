@@ -21,7 +21,6 @@ def _reimport_package() -> None:
     importlib.import_module("retail_clickstream_ai")
     importlib.import_module("retail_clickstream_ai.config")
     importlib.import_module("retail_clickstream_ai.paths")
-    importlib.import_module("retail_clickstream_ai.logging_setup")
 
 
 def test_package_exposes_version() -> None:
