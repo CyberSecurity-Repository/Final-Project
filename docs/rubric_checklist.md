@@ -9,7 +9,7 @@ Every mandatory requirement mapped to concrete, checkable evidence: a **file**, 
 | Requirement | Evidence |
 | --- | --- |
 | CrewAI (two crews, one Flow) | `retail_clickstream_ai/flow.py`; `crews/analyst/`, `crews/scientist/`; test `tests/integration/test_flow.py` |
-| Python 3.11+ | `pyproject.toml` `requires-python = ">=3.11,<3.14"`; CI job on 3.11 |
+| Python 3.11+ | `pyproject.toml` `requires-python = ">=3.11,<3.14"`; CI job on 3.13 (lock's native; see ADR 0006) |
 | Git + GitHub with PRs | one branch/PR per stage (PRs #1–#10 merged); `docs/pr_self_review.md`; §18 of README |
 | Streamlit | `app.py`, `retail_clickstream_ai/dashboard/`; test `tests/unit/test_app.py` (headless `AppTest`) |
 | Pandas / scikit-learn / Matplotlib / Seaborn | `pipeline/eda.py` (pandas + figures), `pipeline/modeling.py` (sklearn) |
@@ -63,7 +63,7 @@ Crew wiring tested in `tests/unit/test_analyst_crew.py`, `tests/unit/test_scient
 | Run manifest (final successful run) | `artifacts/runs/flow-final-deterministic/run_manifest.json` (status success, both gates passed, macro-F1 0.8195) |
 | Artifact integrity verification | `test_committed_artifacts.py::test_committed_run_manifest_fingerprints_committed_artifacts` (manifest hashes == committed files) |
 | Full paid CrewAI Flow works | manual external check on 2026-08-14: `--engine crew` completed successfully (engine=crew, gates passed, macro-F1 0.8195) — see `docs/pr_self_review.md` / Stage-7 notes |
-| GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` (push + PR, Python 3.11, offline) |
+| GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` (push + PR, Python 3.13, offline) |
 | No secrets / raw data tracked | `.gitignore` (`.env*`, `kaggle.json`, `*.pem`, `data/raw/*`); scan reports zero tracked keys |
 | Offline tests need no key/network | `tests/conftest.py` network guard + telemetry opt-outs; mocked crew/LLM boundaries |
 

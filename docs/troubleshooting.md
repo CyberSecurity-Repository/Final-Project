@@ -93,7 +93,8 @@ pip install -r requirements.txt
 pip install -e . --no-deps
 ```
 
-CI runs Python **3.11**; local development uses 3.11–3.13 (`requires-python
+CI runs Python **3.13** (to match the pinned lock — `numpy==2.5.1` needs ≥3.12);
+local development uses 3.11–3.13 (`requires-python
 >=3.11,<3.14`). If a pinned wheel refuses to install on your Python, use a 3.11–3.13
 interpreter, or see [`docs/decisions/0006-venv-pip-ci.md`](decisions/0006-venv-pip-ci.md).
 After any intentional dependency change, refresh the lock with
