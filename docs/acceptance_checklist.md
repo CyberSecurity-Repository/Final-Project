@@ -77,7 +77,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 |---|---|---|---|---|
 | 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | ✅ 186 tests pass (mocked crew/Flow boundaries; network-guarded); run in CI on every push/PR |
 | 2 | Lint / format / type check | `ruff`, `mypy` configured in `pyproject.toml` | 1 | ✅ |
-| 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ✅ push + PR, Python 3.11, pinned pip lock, offline, no secrets/paid calls |
+| 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ✅ push + PR, Python 3.13 (lock's native), pinned pip lock, offline, no secrets/paid calls |
 | 4 | No secrets / raw dataset tracked | `.gitignore`; diff scan | 1–7 | ✅ |
 
 ## Honesty & ethics guardrails

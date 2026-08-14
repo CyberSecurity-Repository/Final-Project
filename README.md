@@ -124,7 +124,7 @@ unzip -o "data/raw/clickstream-data-for-online-shopping.zip" -d data/raw
 
 ## 5. Prerequisites
 
-- **Python 3.11+** (developed and tested on 3.13; CI runs on 3.11).
+- **Python 3.11+** (developed and tested on 3.13; CI also runs on 3.13 to match the pinned lock — see [`docs/decisions/0006-venv-pip-ci.md`](docs/decisions/0006-venv-pip-ci.md)).
 - **Git**.
 - The **raw CSV** (§4) placed at `data/raw/e-shop clothing 2008.csv` — needed only
   for full-data runs, never for install/import/tests.
@@ -266,7 +266,7 @@ mypy                         # type check (targets retail_clickstream_ai/)
 pip freeze --exclude-editable > requirements.txt   # refresh the pinned lock after dep changes
 ```
 
-CI runs the same lint/format/type/test steps on Python 3.11 for every push and
+CI runs the same lint/format/type/test steps on Python 3.13 for every push and
 pull request — offline, with no secrets (`.github/workflows/ci.yml`).
 
 ---
