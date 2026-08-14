@@ -120,8 +120,8 @@
     "weighted_f1": 0.823794
   },
   "timing": {
-    "winner_inference_seconds": 0.0041,
-    "winner_train_seconds": 0.0271
+    "winner_inference_seconds": 0.0061,
+    "winner_train_seconds": 0.0268
   },
   "validation": {
     "accuracy": 0.815948,

@@ -77,7 +77,7 @@
     ]
   },
   "metrics_file": "artifacts/scientist/metrics.json",
-  "metrics_sha256": "d74718d27008bd81a7ceb981ff587f85ea9f0deadf3483f9a2019867152c55c5",
+  "metrics_sha256": "6b9a2f350f9815179cac45d1c8c5dea04bda08830e2acdb450cee4fb72a1e434",
   "package_versions": {
     "joblib": "1.5.3",
     "numpy": "2.5.1",

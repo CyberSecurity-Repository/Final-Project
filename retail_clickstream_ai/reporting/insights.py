@@ -12,9 +12,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from retail_clickstream_ai.paths import ANALYST_EDA_METRICS_REF
 from retail_clickstream_ai.reporting.evidence import Evidence
 
-METRICS_REF = "artifacts/analyst/eda/eda_metrics.json"
+METRICS_REF = ANALYST_EDA_METRICS_REF
 
 
 def _stickiness_word(pct: float) -> str:

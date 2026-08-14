@@ -7,7 +7,7 @@
   ],
   "handoff_path": "artifacts/runs/scientist-2d256c2ecb34/scientist_crew_handoff.json",
   "handoff_ready": true,
-  "handoff_sha256": "c3b3abafe28bce34b44741d78a19169520141bc16998179441337dcff6684c21",
+  "handoff_sha256": "baa136918c73e478ce662fe13f92978e6c52cb4a29b0fcceafdd0fde4c805daa",
   "issues": [],
   "limitations": [
     {
@@ -25,12 +25,12 @@
   ],
   "metrics": {
     "path": "artifacts/scientist/metrics.json",
-    "sha256": "d74718d27008bd81a7ceb981ff587f85ea9f0deadf3483f9a2019867152c55c5"
+    "sha256": "6b9a2f350f9815179cac45d1c8c5dea04bda08830e2acdb450cee4fb72a1e434"
   },
   "model_metadata": {
     "path": "artifacts/scientist/model_metadata.json",
     "round_trip_validated": true,
-    "sha256": "028cbcc305e95b6a9afdfdfd9d5c0587d8c884ca1f4a1d7309e08bf14c251a71"
+    "sha256": "54740eb7cc189f9c32693ac926d93d6ac3d24a8511fffe6798f0b02c9279e4ed"
   },
   "required_artifacts": [
     {

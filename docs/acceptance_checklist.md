@@ -66,18 +66,18 @@ Legend: ✅ done · 🟡 in progress · ⬜ pending
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | Repo: source, tests, artifacts, docs, reproducible commands | Full repository + README | 1–7 | 🟡 |
+| 1 | Repo: source, tests, artifacts, docs, reproducible commands | Full repository + README (18-section evaluator guide) | 1–7 | ✅ README, CI, ADRs, troubleshooting, rubric, run manifest, tested commands |
 | 2 | Business presentation, 10–12 slides (target 11) | `docs/presentation_outline.md` | 8 | ⬜ |
 | 3 | Demo recording ≤5 min | `docs/demo_script.md` + `docs/demo_checklist.md` | 8 | ⬜ |
-| 4 | Three GitHub PRs | `feature/data-analyst`, `feature/model-flow`, `feature/app-release` | 3/5/8 | 🟡 |
+| 4 | Three GitHub PRs | `feature/data-analyst`, `feature/model-flow`, `feature/app-release` | 3/5/8 | 🟡 mapped in `docs/pr_self_review.md`; realised as per-stage PRs #1–#10 + Stage 7 |
 
 ## Quality & CI
 
 | # | Requirement | Planned evidence | Stage | Status |
 |---|---|---|---|---|
-| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | 🟡 182 tests pass (126 unit + 8 Flow integration + 14 crew-robustness + 34 Stage-6 dashboard/UI, mocked crew/Flow boundaries); CI wiring Stage 7 |
+| 1 | Offline tests (no key, no paid LLM) | `pytest` smoke + unit + integration (mocked) | 1–7 | ✅ 186 tests pass (mocked crew/Flow boundaries; network-guarded); run in CI on every push/PR |
 | 2 | Lint / format / type check | `ruff`, `mypy` configured in `pyproject.toml` | 1 | ✅ |
-| 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ⬜ |
+| 3 | GitHub Actions CI (no secrets, no paid calls) | `.github/workflows/ci.yml` | 7 | ✅ push + PR, Python 3.11, pinned pip lock, offline, no secrets/paid calls |
 | 4 | No secrets / raw dataset tracked | `.gitignore`; diff scan | 1–7 | ✅ |
 
 ## Honesty & ethics guardrails

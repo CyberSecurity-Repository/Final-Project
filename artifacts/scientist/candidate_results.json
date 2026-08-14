@@ -6,7 +6,7 @@
       "best_params": {},
       "candidate_id": "baseline_transition",
       "family": "current_category_transition_baseline",
-      "inference_seconds": 0.0099,
+      "inference_seconds": 0.0095,
       "metrics": {
         "accuracy": 0.815948,
         "class_distribution": {
@@ -72,10 +72,10 @@
         "weighted_f1": 0.815967
       },
       "status": "PASS",
-      "train_seconds": 0.0249,
+      "train_seconds": 0.0255,
       "trials": [
         {
-          "inference_seconds": 0.0099,
+          "inference_seconds": 0.0095,
           "metrics": {
             "accuracy": 0.815948,
             "class_distribution": {
@@ -141,7 +141,7 @@
             "weighted_f1": 0.815967
           },
           "params": {},
-          "train_seconds": 0.0249
+          "train_seconds": 0.0255
         }
       ]
     },
@@ -151,7 +151,7 @@
       },
       "candidate_id": "logistic_regression",
       "family": "multinomial_logistic_regression",
-      "inference_seconds": 0.0113,
+      "inference_seconds": 0.0122,
       "metrics": {
         "accuracy": 0.815418,
         "class_distribution": {
@@ -217,10 +217,10 @@
         "weighted_f1": 0.815441
       },
       "status": "PASS",
-      "train_seconds": 0.9338,
+      "train_seconds": 0.9136,
       "trials": [
         {
-          "inference_seconds": 0.0113,
+          "inference_seconds": 0.0122,
           "metrics": {
             "accuracy": 0.815418,
             "class_distribution": {
@@ -288,10 +288,10 @@
           "params": {
             "C": 0.5
           },
-          "train_seconds": 0.9338
+          "train_seconds": 0.9136
         },
         {
-          "inference_seconds": 0.0116,
+          "inference_seconds": 0.0113,
           "metrics": {
             "accuracy": 0.815385,
             "class_distribution": {
@@ -359,7 +359,7 @@
           "params": {
             "C": 1.0
           },
-          "train_seconds": 1.0062
+          "train_seconds": 1.0067
         }
       ]
     },
@@ -370,7 +370,7 @@
       },
       "candidate_id": "random_forest",
       "family": "random_forest",
-      "inference_seconds": 0.5873,
+      "inference_seconds": 0.5856,
       "metrics": {
         "accuracy": 0.809284,
         "class_distribution": {
@@ -436,10 +436,10 @@
         "weighted_f1": 0.809284
       },
       "status": "PASS",
-      "train_seconds": 78.4753,
+      "train_seconds": 77.9799,
       "trials": [
         {
-          "inference_seconds": 0.8133,
+          "inference_seconds": 0.7995,
           "metrics": {
             "accuracy": 0.786273,
             "class_distribution": {
@@ -508,10 +508,10 @@
             "max_depth": null,
             "n_estimators": 200
           },
-          "train_seconds": 144.3598
+          "train_seconds": 144.8412
         },
         {
-          "inference_seconds": 0.5873,
+          "inference_seconds": 0.5856,
           "metrics": {
             "accuracy": 0.809284,
             "class_distribution": {
@@ -580,7 +580,7 @@
             "max_depth": 20,
             "n_estimators": 200
           },
-          "train_seconds": 78.4753
+          "train_seconds": 77.9799
         }
       ]
     }

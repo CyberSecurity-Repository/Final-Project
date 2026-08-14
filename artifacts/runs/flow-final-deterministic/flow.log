@@ -1,0 +1,6 @@
+2026-08-14T06:11:02.949119+00:00 prepared run run_id=flow-final-deterministic engine=deterministic model=gpt-5.6-luna artifact_root=artifacts input_sha256=fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d
+2026-08-14T06:11:05.982889+00:00 analyst crew finished analyst_run_id=analyst-fcc167bbd0ba
+2026-08-14T06:11:06.379358+00:00 analyst gate PASSED
+2026-08-14T06:14:55.521396+00:00 scientist crew finished scientist_run_id=scientist-2d256c2ecb34
+2026-08-14T06:14:55.655944+00:00 model gate PASSED selected=baseline_transition macro_f1=0.819539
+2026-08-14T06:14:55.658143+00:00 SUCCESS run flow-final-deterministic manifest=artifacts/runs/flow-final-deterministic/run_manifest.json

@@ -1,0 +1,63 @@
+name: CI
+
+# Offline quality gate — runs on every push and pull request.
+#
+# This job uses NO secrets: no OpenAI API key, no Kaggle credentials, no dataset
+# download, and no paid LLM calls. The test suite mocks the CrewAI/OpenAI boundary
+# and blocks outbound sockets (see tests/conftest.py), so a green run here proves
+# the package installs, lints, type-checks, and passes the full offline suite from
+# a clean environment — using only the committed fixtures and tracked artifacts.
+#
+# Dependency workflow: venv + pip with the pinned `requirements.txt` lock (this
+# project deliberately uses pip, not uv — see docs/decisions/0006-venv-pip-ci.md).
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, type-check, and offline tests (Python 3.11)
+    runs-on: ubuntu-latest
+    env:
+      # Keep the run fully offline and secret-free even if a test forgets to opt
+      # out. No OPENAI_API_KEY / OPENAI_MODEL_NAME / Kaggle credentials are set.
+      CREWAI_TELEMETRY_OPT_OUT: "true"
+      CREWAI_DISABLE_TELEMETRY: "true"
+      OTEL_SDK_DISABLED: "true"
+      CREWAI_DISABLE_VERSION_CHECK: "true"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install pinned dependencies (pip lock)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e . --no-deps
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Format check (ruff)
+        run: ruff format --check .
+
+      - name: Type check (mypy)
+        run: mypy
+
+      - name: Tests + coverage (offline, no secrets, no paid LLM calls)
+        run: pytest --cov --cov-report=term-missing

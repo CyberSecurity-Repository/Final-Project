@@ -20,6 +20,7 @@ import pytest
 
 from retail_clickstream_ai import flow as F
 from retail_clickstream_ai import paths
+from retail_clickstream_ai.pipeline import data as d
 from retail_clickstream_ai.pipeline import features as feat
 from retail_clickstream_ai.pipeline.analyst_pipeline import run_analyst_pipeline
 from retail_clickstream_ai.pipeline.scientist_pipeline import run_scientist_pipeline
@@ -362,3 +363,43 @@ def test_repeated_run_id_does_not_overwrite(
     # The rejection is reported to a separate directory, not the protected run.
     rejected = list((tmp_path / "runs").glob("dup__rejected-*/failure_report.json"))
     assert rejected
+
+
+# --------------------------------------------------------------------------- #
+# 9. The deterministic engine runs the entire Flow with NO LLM and writes a
+#    manifest whose recorded artifact hashes match the bytes on disk. This is the
+#    offline, reproducible path used to generate the committed run manifest.
+# --------------------------------------------------------------------------- #
+def test_deterministic_engine_end_to_end_writes_manifest(
+    tmp_path: Path, synthetic_raw_path: Path, no_network: None
+) -> None:
+    state = F.run_flow(
+        synthetic_raw_path,
+        run_id="flow-det",
+        engine="deterministic",
+        pin_hash=False,
+        artifact_root=tmp_path,
+    )
+
+    assert state.status is F.RunStatus.SUCCESS
+    assert [e.stage for e in state.stage_events] == EXPECTED_ORDER
+    assert all(e.status == "passed" for e in state.stage_events)
+
+    manifest = _run_dir(tmp_path, "flow-det") / "run_manifest.json"
+    assert manifest.exists()
+    m = json.loads(manifest.read_text(encoding="utf-8"))
+    assert m["status"] == "success"
+    assert m["engine"] == "deterministic"
+    assert m["gates"] == {"analyst_gate": "passed", "model_gate": "passed"}
+    assert m["input"]["sha256"] == state.input_sha256
+    assert m["selection"]["primary_metric"] == "macro_f1"
+    assert m["selection"]["primary_metric_value"] is not None
+
+    # Integrity: every artifact hash recorded in the manifest matches the bytes on
+    # disk, so the manifest is a trustworthy fingerprint of the produced run.
+    for name, art in m["analyst"]["artifacts"].items():
+        assert d.sha256_file(tmp_path / "analyst" / name) == art["sha256"]
+        assert art["size_bytes"] > 0
+    for name, art in m["scientist"]["artifacts"].items():
+        assert d.sha256_file(tmp_path / "scientist" / name) == art["sha256"]
+        assert art["size_bytes"] > 0
