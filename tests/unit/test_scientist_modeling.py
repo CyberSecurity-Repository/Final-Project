@@ -1,4 +1,4 @@
-"""Stage 4 — model training, selection, evaluation, and persistence.
+"""model training, selection, evaluation, and persistence.
 
 Proves: a baseline plus two model variations are compared; the winner is chosen
 on validation macro F1; the test split is never touched during training;

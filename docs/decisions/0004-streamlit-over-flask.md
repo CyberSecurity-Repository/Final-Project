@@ -1,6 +1,6 @@
 # ADR 0004 — Streamlit for the app (over Flask)
 
-**Status:** Accepted (Stage 6) · **Applies to:** the product surface ·
+**Status:** Accepted · **Applies to:** the product surface ·
 **Enforced by:** `app.py` + `retail_clickstream_ai/dashboard/`
 
 ## Context

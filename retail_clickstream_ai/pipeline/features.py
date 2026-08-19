@@ -1,4 +1,4 @@
-"""Leakage-safe feature engineering — implemented in Stage 4.
+"""Leakage-safe feature engineering.
 
 Builds next-main-category targets within verified sessions, drops each session's
 final click, restricts predictors to the current and prior clicks, and produces
@@ -32,7 +32,7 @@ from retail_clickstream_ai.pipeline import data as d
 from retail_clickstream_ai.validation.contract import DatasetContract
 
 # --------------------------------------------------------------------------- #
-# Feature contract (predeclared; see project-brain Decision-Log, Stage 4).
+# Feature contract (predeclared).
 # --------------------------------------------------------------------------- #
 TARGET = "next_main_category"
 SPLIT_COLUMN = "split"

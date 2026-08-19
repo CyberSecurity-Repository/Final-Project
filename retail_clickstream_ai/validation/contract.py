@@ -6,7 +6,7 @@ is **generated deterministically** from verified constants (no timestamps, no
 environment-dependent values), so serializing it twice yields byte-identical
 output and the committed ``dataset_contract.json`` artifact stays reproducible.
 
-Every constraint below was measured from the real file during Stage 2 inspection
+Every constraint below was measured from the real file during dataset inspection
 (SHA-256 ``fcc167bb…8115d``); publisher-documented meanings (e.g. category label
 text) are recorded as descriptions, never as validator constraints, so the
 anti-hallucination boundary holds: constraints come from observed bytes, prose
@@ -25,7 +25,7 @@ from retail_clickstream_ai.pipeline import data as d
 CONTRACT_VERSION = "1.0.0"
 
 # --------------------------------------------------------------------------- #
-# Verified raw-file facts (measured from the bytes during Stage 2).
+# Verified raw-file facts (measured from the bytes).
 # --------------------------------------------------------------------------- #
 RAW_SHA256 = "fcc167bbd0badd4c9685bd8543097e318f8228e48075335db7cd781cee88115d"
 RAW_SIZE_BYTES = 6675312
@@ -35,7 +35,7 @@ OBSERVED_SESSION_COUNT = 24026
 OBSERVED_MONTHS = (4, 5, 6, 7, 8)
 
 # --------------------------------------------------------------------------- #
-# Verified CLEANED-file facts (Stage 3). The cleaned CSV is a deterministic
+# Verified CLEANED-file facts. The cleaned CSV is a deterministic
 # function of the verified raw file, so its hash/size are as much a measured
 # constant as RAW_SHA256 — pinning them here keeps the contract fully
 # reproducible offline (build() needs no file) while letting a validator prove

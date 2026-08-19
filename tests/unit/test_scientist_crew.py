@@ -1,4 +1,4 @@
-"""Stage 4 — CrewAI Scientist crew: wiring, prompt loading, offline tool runs.
+"""CrewAI Scientist crew: wiring, prompt loading, offline tool runs.
 
 All tests are offline: they build and inspect the crew, drive the deterministic
 tools directly (network blocked), and exercise the run path with the LLM factory

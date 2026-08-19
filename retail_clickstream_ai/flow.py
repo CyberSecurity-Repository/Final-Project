@@ -1,4 +1,4 @@
-"""CrewAI Flow orchestration — the Stage 5 conductor.
+"""CrewAI Flow orchestration — the run conductor.
 
 One :class:`RetailClickstreamFlow` automatically and visibly coordinates the two
 crews behind deterministic gates::

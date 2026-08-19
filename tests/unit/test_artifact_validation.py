@@ -1,4 +1,4 @@
-"""Stage 3 — artifact validators: contract↔clean agreement, presence, mismatch.
+"""artifact validators: contract↔clean agreement, presence, mismatch.
 
 Runs offline against the committed real artifacts (no raw dataset needed) plus a
 tmp fixture run, and proves the validator catches tampering.

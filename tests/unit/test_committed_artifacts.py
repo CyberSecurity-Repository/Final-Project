@@ -1,6 +1,6 @@
 """Integrity checks over the *committed* required artifacts and run manifest.
 
-Stage 7 tracks the eight required artifacts plus a successful deterministic run
+The repository tracks the eight required artifacts plus a successful deterministic run
 manifest in the repository, so an evaluator can inspect them and run the app
 without regenerating anything. These tests guard that the committed set stays
 internally consistent:

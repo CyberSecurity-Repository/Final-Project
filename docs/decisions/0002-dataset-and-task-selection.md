@@ -1,6 +1,6 @@
 # ADR 0002 — Dataset and prediction task
 
-**Status:** Accepted (Stage 2) · **Applies to:** whole project · **Enforced by:**
+**Status:** Accepted · **Applies to:** whole project · **Enforced by:**
 `validation/contract.py` (pinned schema/hashes) + `data/README.md`
 
 ## Context

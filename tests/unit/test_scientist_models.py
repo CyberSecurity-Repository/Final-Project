@@ -1,4 +1,4 @@
-"""Stage 4 — Scientist structured-output models.
+"""Scientist structured-output models.
 
 Proves the three handoff models accept valid evidence, reject malformed payloads,
 and — critically — reject a *false PASS*: a PASS that the evidence does not

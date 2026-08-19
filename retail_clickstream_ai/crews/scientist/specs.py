@@ -1,8 +1,8 @@
 """Runtime prompts for the Scientist crew's three agents, authored inline.
 
 Structured exactly like the Analyst specs (see ``analyst/specs.py``). These are
-authored ahead of the Stage 4 crew wiring; the text is verbatim from the original
-prompt design and is inert until the Scientist crew is built."""
+authored inline; the text is verbatim from the original prompt design and
+mirrors the structure of the Analyst specs."""
 
 from __future__ import annotations
 

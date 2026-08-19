@@ -1,4 +1,4 @@
-"""Stage 5 follow-up — ``crews.guardrails``: the completion-guardrail backstop.
+"""``crews.guardrails``: the completion-guardrail backstop.
 
 Fully offline: no crew/LLM machinery, no network. Exercises the guardrail
 closure directly against a real :class:`AnalystRunContext` and a real

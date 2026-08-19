@@ -1,4 +1,4 @@
-"""Stage 3 — CrewAI Analyst crew: wiring, prompt loading, offline tool runs.
+"""CrewAI Analyst crew: wiring, prompt loading, offline tool runs.
 
 All tests are offline: they build and inspect the crew, drive the deterministic
 tools directly (with the network blocked), and exercise the run path with the

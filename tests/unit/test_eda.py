@@ -1,4 +1,4 @@
-"""Stage 3 — deterministic EDA: metric correctness, determinism, figures."""
+"""deterministic EDA: metric correctness, determinism, figures."""
 
 from __future__ import annotations
 

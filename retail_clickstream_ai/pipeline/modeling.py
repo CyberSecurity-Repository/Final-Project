@@ -1,4 +1,4 @@
-"""Model training, evaluation, and persistence — implemented in Stage 4.
+"""Model training, evaluation, and persistence.
 
 Compares a current-category transition baseline, multinomial logistic
 regression, and a random forest with fixed seeds. Selects the winner on

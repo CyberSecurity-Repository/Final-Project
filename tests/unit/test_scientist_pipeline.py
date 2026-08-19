@@ -1,6 +1,6 @@
-"""Stage 4 — the deterministic Scientist pipeline (end-to-end + fail-closed).
+"""the deterministic Scientist pipeline (end-to-end + fail-closed).
 
-Runs the whole stage on synthetic-but-contract-valid Analyst artifacts and proves
+Runs the whole pipeline on synthetic-but-contract-valid Analyst artifacts and proves
 the four required artifacts are produced and validate, the run is repeatable, and
 the pipeline fails closed (writing a failure report, never repairing Analyst
 output) when the Analyst handoff is invalid.

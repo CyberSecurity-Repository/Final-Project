@@ -41,7 +41,7 @@ coverage.xml
 htmlcov/
 
 # ---------------------------------------------------------------------------
-# Raw data — never committed (acquisition documented in Stage 2).
+# Raw data — never committed (acquisition documented in data/README.md).
 # ---------------------------------------------------------------------------
 data/raw/*
 !data/raw/.gitkeep

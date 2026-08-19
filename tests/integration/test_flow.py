@@ -1,4 +1,4 @@
-"""Stage 5 — CrewAI Flow integration tests (mocked crew/LLM boundary, fully offline).
+"""CrewAI Flow integration tests (mocked crew/LLM boundary, fully offline).
 
 Every test records the crew call order **explicitly** so the automated Analyst -> Scientist
 handoff is proven rather than inferred, and asserts that a failing deterministic gate blocks

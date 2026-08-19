@@ -1,7 +1,7 @@
 # ADR 0001 — No random row split; use a chronological month-based split
 
-**Status:** Accepted (Stage 2) · **Applies to:** Stages 2 & 4 · **Enforced by:**
-`dataset_contract.json` (`split`) + leakage unit tests (Stage 4)
+**Status:** Accepted · **Applies to:** data split & feature engineering · **Enforced by:**
+`dataset_contract.json` (`split`) + leakage unit tests
 
 ## Context
 
@@ -44,7 +44,7 @@ The winner is chosen on **validation** macro-F1; the **test** month is scored
 
 ## Consequences
 
-- Feature engineering (Stage 4) may use **only** the current and earlier clicks
+- Feature engineering may use **only** the current and earlier clicks
   of the same session. No value derived from click `t+1` or later may enter the
   features (the target is the sole exception).
 - Each session's **last click is dropped** (it has no next-click label):

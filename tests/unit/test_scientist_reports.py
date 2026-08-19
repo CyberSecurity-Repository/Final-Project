@@ -1,4 +1,4 @@
-"""Stage 4 — Scientist report renderers.
+"""Scientist report renderers.
 
 Proves the reports contain their required sections and that a fabricated number
 is rejected (the deterministic equivalent of the renderer refusing an

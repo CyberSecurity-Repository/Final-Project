@@ -1,6 +1,6 @@
 # ADR 0003 — Deterministic Python owns computation and gates; agents only interpret
 
-**Status:** Accepted (Stages 3–5) · **Applies to:** crews, pipelines, Flow ·
+**Status:** Accepted · **Applies to:** crews, pipelines, Flow ·
 **Enforced by:** Flow routers (`flow.py`), `reporting/evidence.py`, `validation/`
 
 ## Context

@@ -1,4 +1,4 @@
-"""Analyst crew — Stage 3.
+"""Analyst crew.
 
 Three sequential agents: Source & Quality Analyst, Data Engineer, and
 EDA & Business Analyst. Produces the four required Analyst artifacts:

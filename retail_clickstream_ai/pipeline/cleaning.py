@@ -1,6 +1,6 @@
 """Deterministic cleaning of the raw clickstream frame.
 
-Stage 3 scope. This module turns a bytes-verified *raw* frame into the cleaned
+This module turns a bytes-verified *raw* frame into the cleaned
 dataset artifact, recording **every** transformation and its affected-row count
 along the way. Its cardinal rule mirrors the runtime Data Engineer prompt:
 

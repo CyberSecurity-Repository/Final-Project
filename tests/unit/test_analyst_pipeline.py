@@ -1,4 +1,4 @@
-"""Stage 3 — the deterministic Analyst pipeline end-to-end (offline, fixture).
+"""the deterministic Analyst pipeline end-to-end (offline, fixture).
 
 Proves the happy path produces four non-empty artifacts and is repeatable, and
 that the failure path stops, writes a structured failure report, and never emits

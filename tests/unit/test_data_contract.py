@@ -1,4 +1,4 @@
-"""Stage 2 tests: column normalization, the dataset contract, and validators.
+"""Column normalization, the dataset contract, and validators.
 
 These run fully offline against a tiny synthetic fixture (no network, no key,
 never the full raw dataset). They prove the anti-hallucination guarantees:

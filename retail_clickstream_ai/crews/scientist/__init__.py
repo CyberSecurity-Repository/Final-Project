@@ -1,4 +1,4 @@
-"""Scientist crew — implemented in Stage 4.
+"""Scientist crew.
 
 Three sequential agents: Contract & Feature Engineer, Model Trainer, and
 Evaluation & Governance Reviewer. Produces the four required Scientist
