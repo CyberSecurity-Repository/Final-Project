@@ -1,6 +1,6 @@
 # ADR 0005 — Model persistence with joblib + trusted-hash loading
 
-**Status:** Accepted (Stage 4; hardened Stage 6) · **Applies to:** model artifact ·
+**Status:** Accepted · **Applies to:** model artifact ·
 **Enforced by:** `validation/artifacts.py`, `flow.py` model gate,
 `dashboard/data.py::load_verified_model`
 

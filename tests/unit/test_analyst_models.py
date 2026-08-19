@@ -1,4 +1,4 @@
-"""Stage 3 — structured-output models: valid, malformed, and false-PASS cases.
+"""structured-output models: valid, malformed, and false-PASS cases.
 
 Proves the three Analyst handoff models accept well-formed records, reject
 malformed ones (missing fields, bad enums, unknown keys), and — critically —

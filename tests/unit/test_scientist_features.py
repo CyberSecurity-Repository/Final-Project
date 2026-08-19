@@ -1,4 +1,4 @@
-"""Stage 4 — leakage-safe feature engineering.
+"""leakage-safe feature engineering.
 
 The load-bearing correctness tests: the target is the next click within the same
 session (never across a boundary), each session's final click is dropped, past

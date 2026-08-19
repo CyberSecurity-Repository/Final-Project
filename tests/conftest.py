@@ -41,7 +41,7 @@ def no_network(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
 
 
 # --------------------------------------------------------------------------- #
-# Synthetic data for the Scientist (Stage 4) tests.
+# Synthetic data for the Scientist tests.
 #
 # The committed fixture (clickstream_sample.csv) has too few rows per month for a
 # real train/validation/test model comparison, so these fixtures build a small,
@@ -102,7 +102,7 @@ def synthetic_clean_frame() -> Any:
 def synthetic_raw_path(tmp_path: Any) -> Any:
     """Write a contract-valid synthetic raw CSV (raw headers) and return its path.
 
-    Reused by the Stage 5 Flow integration tests, which drive the whole Flow over a
+    Reused by the Flow integration tests, which drive the whole Flow over a
     tmp ``ARTIFACT_ROOT`` with the crew boundary mocked.
     """
     raw_path = tmp_path / "synthetic_raw.csv"

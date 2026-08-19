@@ -1,4 +1,4 @@
-"""Stage 3 — deterministic cleaning: idempotence, order, audit, fail-closed."""
+"""deterministic cleaning: idempotence, order, audit, fail-closed."""
 
 from __future__ import annotations
 

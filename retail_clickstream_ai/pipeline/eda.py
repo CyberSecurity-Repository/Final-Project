@@ -1,6 +1,6 @@
 """Deterministic exploratory data analysis over the cleaned frame.
 
-Stage 3 scope. Every number a human ever reads in ``insights.md`` or
+Every number a human ever reads in ``insights.md`` or
 ``eda_report.html`` is computed here first, as machine-readable metrics, so the
 prose is always traceable to a source file (the anti-hallucination boundary).
 Agents interpret these numbers; they never compute them.

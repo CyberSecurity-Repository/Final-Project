@@ -1,4 +1,4 @@
-"""Streamlit dashboard support code — implemented in Stage 6.
+"""Streamlit dashboard support code.
 
 Business/pipeline logic for the app lives here, never inline in the root
 ``app.py``:

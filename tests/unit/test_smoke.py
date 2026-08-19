@@ -1,4 +1,4 @@
-"""Stage 1 smoke tests.
+"""Smoke tests.
 
 Prove that the package imports offline and without secrets, that OpenAI
 configuration is validated only lazily, and that the canonical path module

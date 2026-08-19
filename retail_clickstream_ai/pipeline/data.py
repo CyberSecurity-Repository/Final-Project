@@ -1,6 +1,6 @@
 """Data acquisition, inspection, and deterministic normalization.
 
-Stage 2 scope: read the semicolon-delimited clickstream CSV exactly, normalize
+Read the semicolon-delimited clickstream CSV exactly, normalize
 its column names by a fixed algorithm, derive the *verified* composite session
 key, sort rows into a canonical order, profile the frame, and expose a
 ``validate-raw`` / ``build-contract`` command line. All numeric work is

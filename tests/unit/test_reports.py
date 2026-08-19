@@ -1,4 +1,4 @@
-"""Stage 3 — deterministic reports: required sections and metric-backed numbers.
+"""deterministic reports: required sections and metric-backed numbers.
 
 Proves the anti-hallucination guarantee for prose: every number in ``insights.md``
 is emitted through the evidence recorder and traces to a metric, and a fabricated
