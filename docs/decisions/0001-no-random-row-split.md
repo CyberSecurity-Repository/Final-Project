@@ -59,5 +59,5 @@ The winner is chosen on **validation** macro-F1; the **test** month is scored
 
 - Contract: `artifacts/analyst/dataset_contract.json` → `split`, `target`,
   `constraints`.
-- Implementation plan: `docs/reference/00_project_implementation_plan.md` §3
-  (Split policy) and §9 (Risk controls — leakage).
+- Leakage controls: `retail_clickstream_ai/pipeline/features.py` and
+  `artifacts/scientist/leakage_audit.json`.
