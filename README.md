@@ -6,8 +6,9 @@ category** a shopper will view within an online-shopping session. A single
 deterministic, tested Python pipelines and validators, and the result is surfaced
 through a **Streamlit** app.
 
-> **Status:** Stage 7 (quality, CI, and documentation) complete. See
-> [Repository & PR workflow](#18-repository--pr-workflow-and-project-status).
+Everything needed to install, run, and audit the system is below. Installing,
+importing, and running the offline test suite need **no API key and no network
+access**; an OpenAI key is required only for the live-LLM run mode.
 
 ---
 
@@ -57,17 +58,16 @@ The Flow can run with `--engine crew` (real LLM crews) or `--engine deterministi
 
 ---
 
-## 3. Mandatory-stack compliance and the six agent roles
+## 3. Technology stack and the six agent roles
 
-| Required stack | How this project satisfies it |
+| Component | Role in the system |
 | --- | --- |
 | **CrewAI** | Two crews (6 agents) orchestrated by one CrewAI `Flow` (`flow.py`). |
 | **Python** | `retail_clickstream_ai/` package; `requires-python >=3.11,<3.14`. |
-| **Git + GitHub with Pull Requests** | One branch + one PR per stage into `main`; see §18. |
 | **Streamlit** | Four-section dashboard (`app.py` + `retail_clickstream_ai/dashboard/`). |
 | **Pandas · scikit-learn · Matplotlib/Seaborn** | Pandas/EDA figures (Analyst); scikit-learn models (Scientist). |
 | **joblib** | Model persistence with a trusted-hash load guard (§17). |
-| **pytest** | 186 offline tests; `ruff` + `mypy` clean; CI in `.github/workflows/ci.yml`. |
+| **pytest · ruff · mypy** | 186 offline tests; lint/format/type-check clean; CI in `.github/workflows/ci.yml`. |
 | **OpenAI (runtime LLM)** | Model chosen via `OPENAI_MODEL_NAME`; needed only for `--engine crew`. |
 
 **Analyst crew (sequential)** — runtime prompts in `crews/analyst/specs.py`:
@@ -273,9 +273,9 @@ pull request — offline, with no secrets (`.github/workflows/ci.yml`).
 
 ## 14. Artifacts
 
-All artifacts are **tracked** (the brief requires the generated required artifacts
-to be committed); only the raw source data is untracked. The eight required
-artifacts:
+All generated artifacts are **tracked** so the repository is runnable and
+auditable without downloading the raw data; only the raw source CSV is untracked.
+The eight primary artifacts:
 
 | # | Artifact | Path | Description |
 | --- | --- | --- | --- |
@@ -380,29 +380,35 @@ version-mismatch recovery steps.
 
 ---
 
-## 18. Repository & PR workflow and project status
+## 18. Repository layout & documentation
 
-**Workflow (per `CLAUDE.md`):** every upload to GitHub goes through a Pull Request
-— never a direct push to `main`. The model is **one branch + one PR per stage**
-(`feature/stage-N-<slug>`); each stage branches from the latest `main` after the
-previous stage's PR merges. The author reviews and merges PRs.
+```
+retail_clickstream_ai/   Python package
+  pipeline/              deterministic data, cleaning, EDA, features, modeling
+  validation/            raw/contract/artifact validators (own every gate)
+  crews/{analyst,scientist}/  CrewAI agents, tools, and I/O helpers
+  reporting/             EDA report, insights, model card/report builders
+  dashboard/             Streamlit sections, data access, cache
+  flow.py                the CrewAI Flow entry point
+app.py                   Streamlit entry point
+artifacts/               tracked generated artifacts (analyst, scientist, runs)
+data/                    data acquisition instructions (raw CSV untracked)
+tests/                   unit + integration tests (offline)
+docs/                    supporting documentation (below)
+.github/workflows/ci.yml offline lint/format/type/test CI
+```
 
-**Status:** Stages 1–6 are merged (PRs #1–#10). This is **Stage 7** (quality, CI,
-documentation) on `feature/stage-7-quality-ci`; **Stage 8** (presentation & demo)
-remains.
+Supporting documentation:
 
-Evidence maps:
-
-- [`docs/rubric_checklist.md`](docs/rubric_checklist.md) — every mandatory
-  requirement → file / test / command / manifest evidence.
-- [`docs/acceptance_checklist.md`](docs/acceptance_checklist.md) — rubric → status.
-- [`docs/pr_self_review.md`](docs/pr_self_review.md) — the work grouped into the
-  three logical PR scopes (`feature/data-analyst`, `feature/model-flow`,
-  `feature/app-release`) with scope, tests, artifacts, risks, and a reviewer
-  checklist.
-- [`docs/decisions/`](docs/decisions/) — architecture decision records.
-- The staged implementation plan is preserved at
-  [`docs/reference/00_project_implementation_plan.md`](docs/reference/00_project_implementation_plan.md).
+- [`docs/decisions/`](docs/decisions/) — architecture decision records (split
+  policy, dataset/task choice, determinism boundary, Streamlit choice, joblib
+  persistence, and the `venv`+`pip` CI decision).
+- [`docs/troubleshooting.md`](docs/troubleshooting.md) — recovery steps for missing
+  dataset, invalid contract, OpenAI config, rate limits, and hash/version
+  mismatches.
+- [`docs/reference/e-shop_clothing_2008_data_description.txt`](docs/reference/e-shop_clothing_2008_data_description.txt)
+  — the dataset's original variable dictionary.
+- [`data/README.md`](data/README.md) — raw-data acquisition and integrity check.
 
 ## License
 

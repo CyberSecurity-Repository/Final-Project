@@ -40,4 +40,4 @@ past-only session history.
 
 ## References
 
-- `data/README.md`, `validation/contract.py`, `docs/reference/00_project_implementation_plan.md` §3.
+- `data/README.md`, `retail_clickstream_ai/validation/contract.py`.
