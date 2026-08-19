@@ -8,8 +8,8 @@
       },
       "dataset_contract.json": {
         "path": "artifacts/analyst/dataset_contract.json",
-        "sha256": "1bf3f25f9ed55f6d27a961691cd097fb4c22fb2517fe6e9f5effd92aa61222d8",
-        "size_bytes": 10673
+        "sha256": "5cedc2ab0b2504b6d9887ed71a0ce3e736fddc689dac8aabf294b2a9f172cfa7",
+        "size_bytes": 10665
       },
       "eda_report.html": {
         "path": "artifacts/analyst/eda_report.html",

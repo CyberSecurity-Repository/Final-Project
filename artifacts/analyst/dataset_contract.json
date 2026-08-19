@@ -30,7 +30,7 @@
     "encoding": "utf-8",
     "file": "clean_data.csv",
     "line_ending": "LF",
-    "note": "Deterministic output of the Stage 3 cleaning pipeline over the verified raw file. A validator proves the produced file's SHA-256 equals the pinned value above.",
+    "note": "Deterministic output of the cleaning pipeline over the verified raw file. A validator proves the produced file's SHA-256 equals the pinned value above.",
     "path": "artifacts/analyst/clean_data.csv",
     "row_count": 165474,
     "sha256": "2d256c2ecb348002f84f53cb04ba97871464d87a6cc78b9615b265c9c16511bd",

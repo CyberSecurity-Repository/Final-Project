@@ -336,7 +336,7 @@ class DatasetContract:
                 "line_ending": CLEAN_LINE_ENDING,
                 "columns": list(d.REQUIRED_OUTPUT_COLUMNS),
                 "committed": True,
-                "note": "Deterministic output of the Stage 3 cleaning pipeline over "
+                "note": "Deterministic output of the cleaning pipeline over "
                 "the verified raw file. A validator proves the produced file's "
                 "SHA-256 equals the pinned value above.",
             },
